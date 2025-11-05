@@ -1,7 +1,27 @@
+import { useState, useEffect } from 'react';
 import { MainLayout } from '@/components/layout/MainLayout';
-import { MOCK_EDUCATION_CONTENT } from '@/lib/constants';
 import { EducationCard } from '@/components/EducationCard';
+import { api } from '@/lib/api-client';
+import type { EducationContent } from '@/lib/constants';
+import { Skeleton } from '@/components/ui/skeleton';
 export function EducationHubPage() {
+  const [articles, setArticles] = useState<EducationContent[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  useEffect(() => {
+    const fetchArticles = async () => {
+      try {
+        setIsLoading(true);
+        const data = await api<EducationContent[]>('/api/education');
+        setArticles(data);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to fetch articles.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchArticles();
+  }, []);
   return (
     <MainLayout>
       <section className="bg-secondary py-20 md:py-24">
@@ -19,11 +39,26 @@ export function EducationHubPage() {
           <h2 className="text-3xl font-bold font-display text-foreground mb-12 text-center md:text-left">
             Latest Articles
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {MOCK_EDUCATION_CONTENT.map((article) => (
-              <EducationCard key={article.id} article={article} />
-            ))}
-          </div>
+          {isLoading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <div key={i} className="space-y-2">
+                  <Skeleton className="h-48 w-full" />
+                  <Skeleton className="h-4 w-1/4" />
+                  <Skeleton className="h-6 w-3/4" />
+                  <Skeleton className="h-10 w-full" />
+                </div>
+              ))}
+            </div>
+          ) : error ? (
+            <div className="text-center py-12 text-destructive">{error}</div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {articles.map((article) => (
+                <EducationCard key={article.id} article={article} />
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </MainLayout>

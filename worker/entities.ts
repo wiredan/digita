@@ -25,9 +25,5 @@ export class OrderEntity extends IndexedEntity<Order> {
     status: 'placed',
     date: new Date().toISOString()
   };
-  static seedData = MOCK_ORDERS.map(order => ({
-    ...order,
-    items: [order.product],
-    totalAmount: order.product.price,
-  }));
+  static seedData = MOCK_ORDERS;
 }

@@ -2,7 +2,7 @@ import { Hono } from "hono";
 import type { Env } from './core-utils';
 import { UserProfileEntity, ProductEntity, OrderEntity } from "./entities";
 import { ok, bad, notFound } from './core-utils';
-import { MOCK_USER_PROFILE, MOCK_USER_PRODUCTS } from "../src/lib/constants";
+import { MOCK_USER_PROFILE, MOCK_USER_PRODUCTS, MOCK_EDUCATION_CONTENT, MOCK_ADMIN_USERS, MOCK_DISPUTES } from "../src/lib/constants";
 import type { LoginResponse, Product, Order } from "@shared/types";
 export function userRoutes(app: Hono<{Bindings: Env;}>) {
   app.use('/api/*', async (c, next) => {
@@ -90,6 +90,15 @@ export function userRoutes(app: Hono<{Bindings: Env;}>) {
     await OrderEntity.create(c.env, newOrder);
     return ok(c, newOrder);
   });
+  app.post('/api/orders/:id/dispute', async (c) => {
+    const { id } = c.req.param();
+    const order = new OrderEntity(c.env, id);
+    if (!(await order.exists())) {
+      return notFound(c, 'Order not found');
+    }
+    await order.mutate(o => ({ ...o, status: 'disputed' }));
+    return ok(c, { message: 'Dispute submitted successfully' });
+  });
   // AUTHENTICATION
   app.post('/api/auth/login', async (c) => {
     const userProfile = MOCK_USER_PROFILE;
@@ -103,5 +112,18 @@ export function userRoutes(app: Hono<{Bindings: Env;}>) {
       products: userProducts.length > 0 ? userProducts : MOCK_USER_PRODUCTS,
     };
     return ok(c, response);
+  });
+  // EDUCATION
+  app.get('/api/education', (c) => {
+    return ok(c, MOCK_EDUCATION_CONTENT);
+  });
+  // ADMIN
+  app.get('/api/admin/users', (c) => {
+    // In a real app, this would fetch from UserProfileEntity.list(c.env)
+    return ok(c, MOCK_ADMIN_USERS);
+  });
+  app.get('/api/admin/disputes', (c) => {
+    // In a real app, this would fetch from a DisputeEntity or filter orders
+    return ok(c, MOCK_DISPUTES);
   });
 }

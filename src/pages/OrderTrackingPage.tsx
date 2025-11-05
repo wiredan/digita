@@ -33,6 +33,7 @@ export function OrderTrackingPage() {
   const [order, setOrder] = useState<Order | null | undefined>(localOrder);
   const [isLoading, setIsLoading] = useState(!localOrder);
   const [error, setError] = useState<string | null>(null);
+  const [disputeMessage, setDisputeMessage] = useState('');
   useEffect(() => {
     if (!localOrder && orderId) {
       const fetchOrder = async () => {
@@ -50,10 +51,25 @@ export function OrderTrackingPage() {
       fetchOrder();
     }
   }, [orderId, localOrder]);
-  const handleDisputeSubmit = () => {
-    toast.success("Dispute submitted successfully.", {
-      description: "Our support team will review your case and get back to you shortly.",
-    });
+  const handleDisputeSubmit = async () => {
+    if (!orderId || !disputeMessage.trim()) {
+      toast.error("Please enter a message for your dispute.");
+      return;
+    }
+    try {
+      await api(`/api/orders/${orderId}/dispute`, {
+        method: 'POST',
+        body: JSON.stringify({ message: disputeMessage }),
+      });
+      toast.success("Dispute submitted successfully.", {
+        description: "Our support team will review your case and get back to you shortly.",
+      });
+      if (order) {
+        setOrder({ ...order, status: 'disputed' });
+      }
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Failed to submit dispute.");
+    }
   };
   if (!user) {
     return <Navigate to="/auth" replace />;
@@ -176,9 +192,9 @@ export function OrderTrackingPage() {
                 <p className="text-sm text-muted-foreground">Having an issue with your order?</p>
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
-                    <Button variant="destructive">
+                    <Button variant="destructive" disabled={order.status === 'disputed'}>
                       <AlertCircle className="mr-2 h-4 w-4" />
-                      Dispute Order
+                      {order.status === 'disputed' ? 'Dispute Submitted' : 'Dispute Order'}
                     </Button>
                   </AlertDialogTrigger>
                   <AlertDialogContent>
@@ -190,7 +206,12 @@ export function OrderTrackingPage() {
                     </AlertDialogHeader>
                     <div className="grid w-full gap-1.5 my-4">
                       <Label htmlFor="dispute-message">Your Message</Label>
-                      <Textarea placeholder="e.g., The items I received were damaged..." id="dispute-message" />
+                      <Textarea 
+                        placeholder="e.g., The items I received were damaged..." 
+                        id="dispute-message" 
+                        value={disputeMessage}
+                        onChange={(e) => setDisputeMessage(e.target.value)}
+                      />
                     </div>
                     <AlertDialogFooter>
                       <AlertDialogCancel>Cancel</AlertDialogCancel>
