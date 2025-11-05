@@ -2,8 +2,8 @@ import { Hono } from "hono";
 import type { Env } from './core-utils';
 import { UserProfileEntity, ProductEntity, OrderEntity } from "./entities";
 import { ok, bad, notFound } from './core-utils';
-import { MOCK_USER_PROFILE, MOCK_ORDERS, MOCK_USER_PRODUCTS } from "../src/lib/constants";
-import type { LoginResponse, Product } from "@shared/types";
+import { MOCK_USER_PROFILE, MOCK_USER_PRODUCTS } from "../src/lib/constants";
+import type { LoginResponse, Product, Order } from "@shared/types";
 export function userRoutes(app: Hono<{Bindings: Env;}>) {
   app.use('/api/*', async (c, next) => {
     await Promise.all([
@@ -31,10 +31,9 @@ export function userRoutes(app: Hono<{Bindings: Env;}>) {
     if (!body.name || !body.description || !body.price || !body.category || !body.imageUrl) {
       return bad(c, 'Missing required product fields');
     }
-    // In a real app, sellerName would come from the authenticated user session.
     const newProduct: Product = {
       id: `prod_${crypto.randomUUID()}`,
-      sellerName: MOCK_USER_PROFILE.name, // Mocked for now
+      sellerName: MOCK_USER_PROFILE.name,
       ...body,
     };
     await ProductEntity.create(c.env, newProduct);
@@ -47,7 +46,6 @@ export function userRoutes(app: Hono<{Bindings: Env;}>) {
     if (!(await product.exists())) {
       return notFound(c, 'Product not found');
     }
-    // Ensure the ID from the URL is used, not from the body
     const updatedProductData: Product = { ...body, id };
     await product.save(updatedProductData);
     return ok(c, updatedProductData);
@@ -60,17 +58,49 @@ export function userRoutes(app: Hono<{Bindings: Env;}>) {
     }
     return ok(c, { id });
   });
+  // ORDERS
+  app.get('/api/orders', async (c) => {
+    const { items } = await OrderEntity.list(c.env);
+    // In a real app, we'd filter by authenticated user ID
+    const userOrders = items.filter(o => o.buyerId === MOCK_USER_PROFILE.id);
+    return ok(c, userOrders);
+  });
+  app.get('/api/orders/:id', async (c) => {
+    const { id } = c.req.param();
+    const order = new OrderEntity(c.env, id);
+    if (!(await order.exists())) {
+      return notFound(c, 'Order not found');
+    }
+    return ok(c, await order.getState());
+  });
+  app.post('/api/orders', async (c) => {
+    const { items, totalAmount } = await c.req.json<{ items: Product[], totalAmount: number }>();
+    if (!items || items.length === 0 || !totalAmount) {
+      return bad(c, 'Missing required order fields');
+    }
+    const newOrder: Order = {
+      id: `order_${crypto.randomUUID()}`,
+      orderNumber: `VD-${Math.floor(Math.random() * 900000) + 100000}`,
+      items,
+      totalAmount,
+      buyerId: MOCK_USER_PROFILE.id, // Mocked for now
+      status: 'placed',
+      date: new Date().toISOString(),
+    };
+    await OrderEntity.create(c.env, newOrder);
+    return ok(c, newOrder);
+  });
   // AUTHENTICATION
   app.post('/api/auth/login', async (c) => {
     const userProfile = MOCK_USER_PROFILE;
-    const userOrders = MOCK_ORDERS;
-    // For mock purposes, we return a subset of all products as "user products"
+    const allOrders = (await OrderEntity.list(c.env)).items;
+    const userOrders = allOrders.filter(o => o.buyerId === MOCK_USER_PROFILE.id);
     const allProducts = (await ProductEntity.list(c.env)).items;
     const userProducts = allProducts.filter(p => p.sellerName === MOCK_USER_PROFILE.name);
     const response: LoginResponse = {
       user: userProfile,
       orders: userOrders,
-      products: userProducts.length > 0 ? userProducts : MOCK_USER_PRODUCTS, // Fallback for initial seed
+      products: userProducts.length > 0 ? userProducts : MOCK_USER_PRODUCTS,
     };
     return ok(c, response);
   });

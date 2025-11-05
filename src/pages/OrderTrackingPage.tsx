@@ -1,30 +1,62 @@
+import { useState, useEffect } from 'react';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { Link, useParams, Navigate } from 'react-router-dom';
 import { useUserStore } from '@/stores/userStore';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { ArrowLeft, Package, Truck, CheckCircle, Home } from 'lucide-react';
+import { ArrowLeft, Package, Truck, CheckCircle, Home, Loader2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
-import type { OrderStatus } from '@shared/types';
-const orderStatuses: OrderStatus[] = ['placed', 'shipped', 'delivered', 'cancelled', 'disputed'];
+import type { Order, OrderStatus } from '@shared/types';
+import { api } from '@/lib/api-client';
+import { Skeleton } from '@/components/ui/skeleton';
 export function OrderTrackingPage() {
   const { orderId } = useParams();
   const user = useUserStore((s) => s.user);
-  const orders = useUserStore((s) => s.orders);
+  const localOrder = useUserStore((s) => s.orders.find((o) => o.id === orderId));
+  const [order, setOrder] = useState<Order | null | undefined>(localOrder);
+  const [isLoading, setIsLoading] = useState(!localOrder);
+  const [error, setError] = useState<string | null>(null);
+  useEffect(() => {
+    if (!localOrder && orderId) {
+      const fetchOrder = async () => {
+        try {
+          setIsLoading(true);
+          const data = await api<Order>(`/api/orders/${orderId}`);
+          setOrder(data);
+        } catch (err) {
+          setError(err instanceof Error ? err.message : 'Failed to fetch order details.');
+          setOrder(null);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+      fetchOrder();
+    }
+  }, [orderId, localOrder]);
   if (!user) {
     return <Navigate to="/auth" replace />;
   }
-  const order = orders.find((o) => o.id === orderId);
-  if (!order) {
+  if (isLoading) {
+    return (
+      <MainLayout>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+          <div className="flex justify-center items-center h-64">
+            <Loader2 className="h-12 w-12 animate-spin text-primary" />
+          </div>
+        </div>
+      </MainLayout>
+    );
+  }
+  if (error || !order) {
     return (
       <MainLayout>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="py-16 md:py-24 text-center">
             <h1 className="text-4xl font-bold font-display">Order Not Found</h1>
             <p className="mt-4 text-lg text-muted-foreground">
-              We couldn't find the order you're looking for.
+              {error || "We couldn't find the order you're looking for."}
             </p>
             <Button asChild className="mt-8">
               <Link to="/profile">
@@ -90,13 +122,17 @@ export function OrderTrackingPage() {
               <div className="grid md:grid-cols-2 gap-8">
                 <div>
                   <h3 className="font-semibold text-lg mb-4">Product Details</h3>
-                  <div className="flex items-center gap-4 p-4 border rounded-lg">
-                    <img src={order.product.imageUrl} alt={order.product.name} className="w-20 h-20 object-cover rounded-md" />
-                    <div>
-                      <p className="font-semibold">{order.product.name}</p>
-                      <p className="text-sm text-muted-foreground">Qty: 1</p>
-                      <p className="text-sm font-semibold text-primary">${order.product.price.toFixed(2)}</p>
-                    </div>
+                  <div className="space-y-4">
+                    {order.items.map(item => (
+                      <div key={item.id} className="flex items-center gap-4 p-4 border rounded-lg">
+                        <img src={item.imageUrl} alt={item.name} className="w-20 h-20 object-cover rounded-md" />
+                        <div>
+                          <p className="font-semibold">{item.name}</p>
+                          <p className="text-sm text-muted-foreground">Qty: 1</p>
+                          <p className="text-sm font-semibold text-primary">${item.price.toFixed(2)}</p>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
                 <div>

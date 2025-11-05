@@ -40,12 +40,13 @@ export interface UserProfile {
 export type OrderStatus = 'placed' | 'shipped' | 'delivered' | 'cancelled' | 'disputed';
 export interface Order {
   id: string;
-  product: Product;
+  items: Product[];
   buyerId: string;
   status: OrderStatus;
   date: string; // ISO 8601 date string
   trackingNumber?: string;
   orderNumber: string;
+  totalAmount: number;
 }
 export interface LoginResponse {
     user: UserProfile;

@@ -111,7 +111,7 @@ export function ProfilePage() {
                         <TableHeader>
                           <TableRow>
                             <TableHead>Order</TableHead>
-                            <TableHead>Product</TableHead>
+                            <TableHead>Items</TableHead>
                             <TableHead>Date</TableHead>
                             <TableHead>Status</TableHead>
                             <TableHead className="text-right">Total</TableHead>
@@ -121,7 +121,7 @@ export function ProfilePage() {
                           {orders.map(order => (
                             <TableRow key={order.id} className="cursor-pointer hover:bg-muted/50" onClick={() => navigate(`/order/${order.id}`)}>
                               <TableCell className="font-medium">{order.orderNumber}</TableCell>
-                              <TableCell>{order.product.name}</TableCell>
+                              <TableCell>{order.items.length} item(s)</TableCell>
                               <TableCell>{format(new Date(order.date), 'MMM d, yyyy')}</TableCell>
                               <TableCell>
                                 <div className="flex items-center gap-2">
@@ -129,7 +129,7 @@ export function ProfilePage() {
                                   <span>{orderStatusMap[order.status].text}</span>
                                 </div>
                               </TableCell>
-                              <TableCell className="text-right">${order.product.price.toFixed(2)}</TableCell>
+                              <TableCell className="text-right">${order.totalAmount.toFixed(2)}</TableCell>
                             </TableRow>
                           ))}
                         </TableBody>

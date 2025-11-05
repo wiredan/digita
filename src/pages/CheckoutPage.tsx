@@ -12,8 +12,7 @@ import * as z from 'zod';
 import { toast } from 'sonner';
 import { Toaster } from '@/components/ui/sonner';
 import { Separator } from '@/components/ui/separator';
-import { CheckCircle } from 'lucide-react';
-import type { Order } from '@shared/types';
+import { CheckCircle, Loader2 } from 'lucide-react';
 const shippingSchema = z.object({
   address: z.string().min(5, "Address is required"),
   city: z.string().min(2, "City is required"),
@@ -29,9 +28,10 @@ export function CheckoutPage() {
   const navigate = useNavigate();
   const user = useUserStore(s => s.user);
   const cart = useUserStore(s => s.cart);
-  const addOrder = useUserStore(s => s.addOrder);
+  const placeOrder = useUserStore(s => s.placeOrder);
   const clearCart = useUserStore(s => s.clearCart);
   const [step, setStep] = useState<Step>('shipping');
+  const [isLoading, setIsLoading] = useState(false);
   const shippingForm = useForm<z.infer<typeof shippingSchema>>({
     resolver: zodResolver(shippingSchema),
     defaultValues: { address: "123 Verdant Lane", city: "Farmville", zip: "54321" },
@@ -45,21 +45,18 @@ export function CheckoutPage() {
   const subtotal = cart.reduce((acc, p) => acc + p.price, 0);
   const tax = subtotal * 0.08;
   const total = subtotal + tax;
-  const handlePlaceOrder = () => {
-    cart.forEach(product => {
-      const newOrder: Order = {
-        id: `order_${Date.now()}_${product.id}`,
-        orderNumber: `VD-${Math.floor(Math.random() * 900000) + 100000}`,
-        product,
-        buyerId: user!.id,
-        status: 'placed',
-        date: new Date().toISOString(),
-      };
-      addOrder(newOrder);
-    });
-    clearCart();
-    setStep('confirmation');
-    toast.success("Order placed successfully!");
+  const handlePlaceOrder = async () => {
+    setIsLoading(true);
+    try {
+      await placeOrder(cart, total);
+      clearCart();
+      setStep('confirmation');
+      toast.success("Order placed successfully!");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Failed to place order.");
+    } finally {
+      setIsLoading(false);
+    }
   };
   const renderStep = () => {
     switch (step) {
@@ -117,7 +114,10 @@ export function CheckoutPage() {
             </div>
             <div className="flex justify-between">
               <Button variant="outline" onClick={() => setStep('payment')}>Back</Button>
-              <Button onClick={handlePlaceOrder}>Place Order</Button>
+              <Button onClick={handlePlaceOrder} disabled={isLoading}>
+                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Place Order
+              </Button>
             </div>
           </div>
         );

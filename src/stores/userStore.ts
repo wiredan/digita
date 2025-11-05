@@ -10,7 +10,7 @@ interface UserState {
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
   updateKycStatus: (status: KycStatus) => void;
-  addOrder: (order: Order) => void;
+  placeOrder: (cart: Product[], totalAmount: number) => Promise<Order>;
   addProduct: (productData: Omit<Product, 'id' | 'sellerName'>) => Promise<void>;
   updateProduct: (product: Product) => Promise<void>;
   deleteProduct: (productId: string) => Promise<void>;
@@ -20,7 +20,7 @@ interface UserState {
 }
 export const useUserStore = create<UserState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       user: null,
       orders: [],
       products: [],
@@ -37,10 +37,16 @@ export const useUserStore = create<UserState>()(
         set((state) => ({
           user: state.user ? { ...state.user, kycStatus: status } : null,
         })),
-      addOrder: (order) =>
+      placeOrder: async (cart, totalAmount) => {
+        const newOrder = await api<Order>('/api/orders', {
+          method: 'POST',
+          body: JSON.stringify({ items: cart, totalAmount }),
+        });
         set((state) => ({
-          orders: [order, ...state.orders],
-        })),
+          orders: [newOrder, ...state.orders],
+        }));
+        return newOrder;
+      },
       addProduct: async (productData) => {
         const newProduct = await api<Product>('/api/products', {
           method: 'POST',
@@ -76,8 +82,8 @@ export const useUserStore = create<UserState>()(
       clearCart: () => set({ cart: [] }),
     }),
     {
-      name: 'user-session-storage', // unique name
-      storage: createJSONStorage(() => sessionStorage), // (optional) by default, 'localStorage' is used
+      name: 'user-session-storage',
+      storage: createJSONStorage(() => sessionStorage),
     }
   )
 );
