@@ -18,7 +18,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from '@/components/ui/badge';
 import { Cart } from '../Cart';
 import { useAppStore, Currency, Language } from '@/stores/appStore';
-import { ThemeToggle } from '../ThemeToggle';interface SeparatorProps {children?: React.ReactNode;className?: string;style?: React.CSSProperties;[key: string]: unknown;}
+import { ThemeToggle } from '../ThemeToggle';
+import { Separator } from '@/components/ui/separator';
 const navLinks = [
 { to: '/', label: 'Marketplace' },
 { to: '/education', label: 'Education Hub' }];

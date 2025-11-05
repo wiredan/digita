@@ -10,6 +10,7 @@ interface UserState {
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
   updateKycStatus: (status: KycStatus) => void;
+  updateProfile: (data: Partial<Pick<UserProfile, 'name' | 'avatarUrl'>>) => Promise<void>;
   placeOrder: (cart: Product[], totalAmount: number) => Promise<Order>;
   addProduct: (productData: Omit<Product, 'id' | 'sellerName'>) => Promise<void>;
   updateProduct: (product: Product) => Promise<void>;
@@ -37,6 +38,15 @@ export const useUserStore = create<UserState>()(
         set((state) => ({
           user: state.user ? { ...state.user, kycStatus: status } : null,
         })),
+      updateProfile: async (data) => {
+        const updatedUser = await api<UserProfile>('/api/profile', {
+          method: 'PUT',
+          body: JSON.stringify(data),
+        });
+        set((state) => ({
+          user: state.user ? { ...state.user, ...updatedUser } : null,
+        }));
+      },
       placeOrder: async (cart, totalAmount) => {
         const newOrder = await api<Order>('/api/orders', {
           method: 'POST',

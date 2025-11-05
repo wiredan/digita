@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { useUserStore } from '@/stores/userStore';
 import { Navigate, Link, useNavigate } from 'react-router-dom';
@@ -7,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { CheckCircle, Clock, AlertCircle, Truck, Package, MoreHorizontal, PlusCircle } from 'lucide-react';
+import { CheckCircle, Clock, AlertCircle, Truck, Package, MoreHorizontal, PlusCircle, Loader2 } from 'lucide-react';
 import { format } from 'date-fns';
 import {
   DropdownMenu,
@@ -28,6 +29,11 @@ import {
 } from "@/components/ui/alert-dialog";
 import { toast } from 'sonner';
 import { Toaster } from '@/components/ui/sonner';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
 const kycStatusMap = {
   verified: { text: 'Verified', variant: 'default', icon: <CheckCircle className="mr-2 h-4 w-4" /> },
   pending: { text: 'Pending', variant: 'secondary', icon: <Clock className="mr-2 h-4 w-4" /> },
@@ -41,15 +47,40 @@ const orderStatusMap = {
   cancelled: { text: 'Cancelled', icon: <AlertCircle className="h-4 w-4 text-red-500" /> },
   disputed: { text: 'Disputed', icon: <AlertCircle className="h-4 w-4 text-yellow-500" /> },
 };
+const settingsSchema = z.object({
+  name: z.string().min(2, { message: "Name must be at least 2 characters." }),
+  avatarUrl: z.string().url({ message: "Please enter a valid URL." }).optional().or(z.literal('')),
+});
+type SettingsFormValues = z.infer<typeof settingsSchema>;
 export function ProfilePage() {
   const user = useUserStore(s => s.user);
   const orders = useUserStore(s => s.orders);
   const products = useUserStore(s => s.products);
   const deleteProduct = useUserStore(s => s.deleteProduct);
+  const updateProfile = useUserStore(s => s.updateProfile);
   const navigate = useNavigate();
+  const [isSettingsLoading, setIsSettingsLoading] = useState(false);
+  const settingsForm = useForm<SettingsFormValues>({
+    resolver: zodResolver(settingsSchema),
+    defaultValues: {
+      name: user?.name || '',
+      avatarUrl: user?.avatarUrl || '',
+    },
+  });
   if (!user) {
     return <Navigate to="/auth" replace />;
   }
+  const handleSettingsSubmit = async (values: SettingsFormValues) => {
+    setIsSettingsLoading(true);
+    try {
+      await updateProfile(values);
+      toast.success("Profile updated successfully!");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Failed to update profile.");
+    } finally {
+      setIsSettingsLoading(false);
+    }
+  };
   const handleDeleteProduct = async (productId: string) => {
     try {
       await deleteProduct(productId);
@@ -204,9 +235,41 @@ export function ProfilePage() {
                       <CardTitle>Account Settings</CardTitle>
                       <CardDescription>Manage your account preferences.</CardDescription>
                     </CardHeader>
-                    <CardContent className="space-y-6">
-                      <p className="text-muted-foreground">Settings form will be implemented here.</p>
-                      <Button>Update Profile</Button>
+                    <CardContent>
+                      <Form {...settingsForm}>
+                        <form onSubmit={settingsForm.handleSubmit(handleSettingsSubmit)} className="space-y-6">
+                          <FormField
+                            control={settingsForm.control}
+                            name="name"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Full Name</FormLabel>
+                                <FormControl>
+                                  <Input placeholder="Your full name" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <FormField
+                            control={settingsForm.control}
+                            name="avatarUrl"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Avatar URL</FormLabel>
+                                <FormControl>
+                                  <Input placeholder="https://example.com/avatar.png" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <Button type="submit" disabled={isSettingsLoading}>
+                            {isSettingsLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                            Update Profile
+                          </Button>
+                        </form>
+                      </Form>
                     </CardContent>
                   </Card>
                 </TabsContent>

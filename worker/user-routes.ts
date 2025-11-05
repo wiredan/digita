@@ -2,8 +2,9 @@ import { Hono } from "hono";
 import type { Env } from './core-utils';
 import { UserProfileEntity, ProductEntity, OrderEntity } from "./entities";
 import { ok, bad, notFound } from './core-utils';
-import { MOCK_USER_PROFILE, MOCK_USER_PRODUCTS, MOCK_EDUCATION_CONTENT, MOCK_ADMIN_USERS, MOCK_DISPUTES } from "../src/lib/constants";
-import type { LoginResponse, Product, Order } from "@shared/types";
+import { MOCK_USER_PROFILE, MOCK_USER_PRODUCTS, MOCK_EDUCATION_CONTENT } from "../src/lib/constants";
+import type { LoginResponse, Product, Order, UserProfile, AdminUser, Dispute } from "@shared/types";
+import { format } from 'date-fns';
 export function userRoutes(app: Hono<{Bindings: Env;}>) {
   app.use('/api/*', async (c, next) => {
     await Promise.all([
@@ -99,7 +100,7 @@ export function userRoutes(app: Hono<{Bindings: Env;}>) {
     await order.mutate(o => ({ ...o, status: 'disputed' }));
     return ok(c, { message: 'Dispute submitted successfully' });
   });
-  // AUTHENTICATION
+  // AUTH & PROFILE
   app.post('/api/auth/login', async (c) => {
     const userProfile = MOCK_USER_PROFILE;
     const allOrders = (await OrderEntity.list(c.env)).items;
@@ -113,17 +114,49 @@ export function userRoutes(app: Hono<{Bindings: Env;}>) {
     };
     return ok(c, response);
   });
+  app.put('/api/profile', async (c) => {
+    const body = await c.req.json<Partial<Pick<UserProfile, 'name' | 'avatarUrl'>>>();
+    const user = new UserProfileEntity(c.env, MOCK_USER_PROFILE.id);
+    if (!(await user.exists())) {
+      return notFound(c, 'User not found');
+    }
+    const updatedUser = await user.mutate(u => ({ ...u, ...body }));
+    return ok(c, updatedUser);
+  });
   // EDUCATION
   app.get('/api/education', (c) => {
     return ok(c, MOCK_EDUCATION_CONTENT);
   });
-  // ADMIN
-  app.get('/api/admin/users', (c) => {
-    // In a real app, this would fetch from UserProfileEntity.list(c.env)
-    return ok(c, MOCK_ADMIN_USERS);
+  app.get('/api/education/:id', (c) => {
+    const { id } = c.req.param();
+    const article = MOCK_EDUCATION_CONTENT.find(a => a.id === id);
+    if (!article) {
+      return notFound(c, 'Article not found');
+    }
+    return ok(c, article);
   });
-  app.get('/api/admin/disputes', (c) => {
-    // In a real app, this would fetch from a DisputeEntity or filter orders
-    return ok(c, MOCK_DISPUTES);
+  // ADMIN
+  app.get('/api/admin/users', async (c) => {
+    const { items } = await UserProfileEntity.list(c.env);
+    const adminUsers: AdminUser[] = items.map(u => ({
+      id: u.id,
+      name: u.name,
+      email: u.email,
+      kycStatus: u.kycStatus,
+      joinDate: format(new Date(), 'yyyy-MM-dd'), // Mock join date
+    }));
+    return ok(c, adminUsers);
+  });
+  app.get('/api/admin/disputes', async (c) => {
+    const { items } = await OrderEntity.list(c.env);
+    const disputedOrders = items.filter(o => o.status === 'disputed');
+    const disputes: Dispute[] = disputedOrders.map(o => ({
+      id: o.id,
+      orderNumber: o.orderNumber,
+      productName: o.items[0]?.name || 'N/A',
+      status: 'disputed',
+      date: o.date,
+    }));
+    return ok(c, disputes);
   });
 }

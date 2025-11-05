@@ -1,4 +1,4 @@
-import type { Product, UserProfile, Order, KycStatus } from '@shared/types';
+import type { Product, UserProfile, Order, KycStatus, EducationContent, AdminUser, Dispute } from '@shared/types';
 export const MOCK_PRODUCTS: Product[] = [
   {
     id: 'prod_01',
@@ -114,16 +114,6 @@ export const MOCK_ORDERS: Order[] = [
 export const MOCK_USER_PRODUCTS: Product[] = [
   MOCK_PRODUCTS[1], MOCK_PRODUCTS[4], MOCK_PRODUCTS[6]
 ].map(p => ({ ...p, sellerName: MOCK_USER_PROFILE.name }));
-export interface EducationContent {
-  id: string;
-  title: string;
-  category: string;
-  imageUrl: string;
-  author: string;
-  date: string;
-  excerpt: string;
-  content: string;
-}
 export const MOCK_EDUCATION_CONTENT: EducationContent[] = [
   {
     id: 'edu_01',
@@ -156,28 +146,14 @@ export const MOCK_EDUCATION_CONTENT: EducationContent[] = [
     content: 'For anyone in agribusiness, understanding market prices is crucial for profitability and long-term success. At its core, the price of any agricultural commodity is determined by the fundamental economic principles of supply and demand. Mastering these concepts can help you make informed decisions about when to sell, what to plant, and how to manage risk.\n\nSupply refers to the total amount of a product available on the market. This is influenced by factors like total acreage planted, weather conditions during the growing season, crop yields, and government policies. A bumper crop due to ideal weather will increase supply, putting downward pressure on prices. Conversely, a drought or flood that reduces yields will decrease supply, causing prices to rise. Demand, on the other hand, is the quantity of a product that consumers are willing and able to buy. It is affected by consumer preferences, population growth, global trade agreements, and the price of substitute goods. For example, a rising global demand for biofuels can increase the price of corn, as it is a key feedstock. The interplay between these two forces creates the market price. When supply exceeds demand, prices fall. When demand outstrips supply, prices rise. By staying informed about global weather patterns, trade news, and consumer trends, you can better anticipate these market shifts and position your business for success.'
   },
 ];
-export interface AdminUser {
-  id: string;
-  name: string;
-  email: string;
-  kycStatus: KycStatus;
-  joinDate: string;
-}
 export const MOCK_ADMIN_USERS: AdminUser[] = [
   { id: 'user_123', name: 'Alex Doe', email: 'alex.doe@example.com', kycStatus: 'verified', joinDate: '2023-01-15' },
   { id: 'user_456', name: 'Samantha Bee', email: 's.bee@example.com', kycStatus: 'pending', joinDate: '2023-03-22' },
   { id: 'user_789', name: 'John Smith', email: 'j.smith@example.com', kycStatus: 'not_started', joinDate: '2023-05-10' },
   { id: 'user_101', name: 'Maria Garcia', email: 'm.garcia@example.com', kycStatus: 'rejected', joinDate: '2023-06-01' },
 ];
-export interface Dispute {
-  id: string;
-  orderNumber: string;
-  productName: string;
-  status: 'open' | 'resolved' | 'escalated';
-  date: string;
-}
 export const MOCK_DISPUTES: Dispute[] = [
-  { id: 'disp_01', orderNumber: 'VD-734511', productName: 'Heirloom Tomatoes', status: 'open', date: '2023-10-29' },
+  { id: 'disp_01', orderNumber: 'VD-734511', productName: 'Heirloom Tomatoes', status: 'disputed', date: '2023-10-29' },
   { id: 'disp_02', orderNumber: 'VD-698234', productName: 'Organic Hass Avocados', status: 'resolved', date: '2023-10-25' },
   { id: 'disp_03', orderNumber: 'VD-711298', productName: 'Free-Range Eggs', status: 'escalated', date: '2023-10-28' },
 ];

@@ -53,3 +53,27 @@ export interface LoginResponse {
     orders: Order[];
     products: Product[];
 }
+export interface EducationContent {
+  id: string;
+  title: string;
+  category: string;
+  imageUrl: string;
+  author: string;
+  date: string;
+  excerpt: string;
+  content: string;
+}
+export interface AdminUser {
+  id: string;
+  name: string;
+  email: string;
+  kycStatus: KycStatus;
+  joinDate: string;
+}
+export interface Dispute {
+  id: string;
+  orderNumber: string;
+  productName: string;
+  status: 'open' | 'resolved' | 'escalated' | 'disputed';
+  date: string;
+}

@@ -22,7 +22,7 @@ const productSchema = z.object({
   category: z.string().min(1, { message: "Please select a category." }),
   imageUrl: z.string().url({ message: "Please enter a valid image URL." }),
 });
-type ProductFormData = z.infer<typeof productSchema>;
+type ProductFormValues = z.infer<typeof productSchema>;
 const categories = ["Fruits", "Vegetables", "Bakery", "Dairy & Eggs", "Pantry"];
 export function ProductEditPage() {
   const navigate = useNavigate();
@@ -34,7 +34,7 @@ export function ProductEditPage() {
   const addProduct = useUserStore(s => s.addProduct);
   const updateProduct = useUserStore(s => s.updateProduct);
   const productToEdit = isEditMode ? userProducts.find(p => p.id === productId) : null;
-  const form = useForm<ProductFormData>({
+  const form = useForm<ProductFormValues>({
     resolver: zodResolver(productSchema),
     defaultValues: isEditMode && productToEdit ? {
       name: productToEdit.name,
@@ -50,7 +50,7 @@ export function ProductEditPage() {
       imageUrl: "",
     },
   });
-  const onSubmit = async (values: ProductFormData) => {
+  const onSubmit = async (values: ProductFormValues) => {
     if (!user) return;
     setIsLoading(true);
     try {
