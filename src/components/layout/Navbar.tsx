@@ -12,8 +12,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
   DropdownMenuRadioGroup,
-  DropdownMenuRadioItem } from
-"@/components/ui/dropdown-menu";
+  DropdownMenuRadioItem
+} from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from '@/components/ui/badge';
 import { Cart } from '../Cart';
@@ -21,8 +21,9 @@ import { useAppStore, Currency, Language } from '@/stores/appStore';
 import { ThemeToggle } from '../ThemeToggle';
 import { Separator } from '@/components/ui/separator';
 const navLinks = [
-{ to: '/', label: 'Marketplace' },
-{ to: '/education', label: 'Education Hub' }];
+  { to: '/', label: 'Marketplace' },
+  { to: '/education', label: 'Education Hub' }
+];
 const currencies: Currency[] = ['USD', 'NGN', 'VND'];
 const languages: Language[] = ['English', 'Hausa', 'Yoruba', 'Igbo', 'Vietnamese'];
 export function Navbar() {
@@ -42,8 +43,8 @@ export function Navbar() {
   };
   const commonLinkClasses = "transition-colors hover:text-primary";
   const activeLinkClasses = "text-primary font-semibold";
-  const UserMenu = () =>
-  <DropdownMenu>
+  const UserMenu = () => (
+    <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-8 w-8 rounded-full">
           <Avatar className="h-9 w-9">
@@ -70,7 +71,8 @@ export function Navbar() {
           <span>Log out</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
-    </DropdownMenu>;
+    </DropdownMenu>
+  );
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -79,21 +81,20 @@ export function Navbar() {
             <Leaf className="h-7 w-7 text-primary" />
             <span className="text-xl font-bold font-display text-primary">DAN</span>
           </Link>
-          {/* Desktop Navigation - REWRITTEN */}
-          <nav className="hidden md:flex items-center gap-4 text-sm font-medium">
-            {navLinks.map((link) =>
-            <NavLink
-              key={link.to}
-              to={link.to}
-              className={({ isActive }) =>
-              `${commonLinkClasses} ${isActive ? activeLinkClasses : 'text-muted-foreground'}`
-              }>
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
+            {navLinks.map((link) => (
+              <NavLink
+                key={link.to}
+                to={link.to}
+                className={({ isActive }) =>
+                  `${commonLinkClasses} ${isActive ? activeLinkClasses : 'text-muted-foreground'}`
+                }>
                 {link.label}
               </NavLink>
-            )}
-            {/* Actions are now direct children of the nav */}
-            <div className="flex items-center gap-2 ml-4">
-              <ThemeToggle className="h-9 w-9" />
+            ))}
+            <div className="flex items-center gap-2">
+              <ThemeToggle />
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="icon"><DollarSign className="h-5 w-5" /></Button>
@@ -119,13 +120,14 @@ export function Navbar() {
               <Separator orientation="vertical" className="h-6" />
               <Button variant="ghost" size="icon" className="relative" onClick={() => setIsCartOpen(true)}>
                 <ShoppingCart className="h-5 w-5" />
-                {cart.length > 0 &&
-                <Badge className="absolute -top-2 -right-2 h-5 w-5 justify-center p-0">{cart.length}</Badge>
-                }
+                {cart.length > 0 && (
+                  <Badge className="absolute -top-2 -right-2 h-5 w-5 justify-center p-0">{cart.length}</Badge>
+                )}
               </Button>
-              {user ?
-              <UserMenu /> :
-              <>
+              {user ? (
+                <UserMenu />
+              ) : (
+                <>
                   <Button variant="ghost" asChild>
                     <Link to="/auth">Log In</Link>
                   </Button>
@@ -133,10 +135,10 @@ export function Navbar() {
                     <Link to="/auth">Sign Up</Link>
                   </Button>
                 </>
-              }
+              )}
             </div>
           </nav>
-          {/* Mobile Navigation - UNCHANGED */}
+          {/* Mobile Navigation */}
           <div className="md:hidden">
             <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
               <SheetTrigger asChild>
@@ -152,27 +154,28 @@ export function Navbar() {
                     <span className="text-xl font-bold font-display text-primary">DAN</span>
                   </Link>
                   <nav className="flex flex-col space-y-4">
-                    {navLinks.map((link) =>
-                    <NavLink
-                      key={link.to}
-                      to={link.to}
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className={({ isActive }) =>
-                      `text-lg ${commonLinkClasses} ${isActive ? activeLinkClasses : 'text-muted-foreground'}`
-                      }>
+                    {navLinks.map((link) => (
+                      <NavLink
+                        key={link.to}
+                        to={link.to}
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className={({ isActive }) =>
+                          `text-lg ${commonLinkClasses} ${isActive ? activeLinkClasses : 'text-muted-foreground'}`
+                        }>
                         {link.label}
                       </NavLink>
-                    )}
+                    ))}
                   </nav>
                   <div className="mt-8 flex flex-col gap-2">
-                    {user ?
-                    <>
+                    {user ? (
+                      <>
                         <Button variant="ghost" asChild>
                           <Link to="/profile" onClick={() => setIsMobileMenuOpen(false)}>Profile</Link>
                         </Button>
-                        <Button onClick={() => {handleLogout();setIsMobileMenuOpen(false);}}>Log Out</Button>
-                      </> :
-                    <>
+                        <Button onClick={() => { handleLogout(); setIsMobileMenuOpen(false); }}>Log Out</Button>
+                      </>
+                    ) : (
+                      <>
                         <Button variant="ghost" asChild>
                           <Link to="/auth" onClick={() => setIsMobileMenuOpen(false)}>Log In</Link>
                         </Button>
@@ -180,7 +183,7 @@ export function Navbar() {
                           <Link to="/auth" onClick={() => setIsMobileMenuOpen(false)}>Sign Up</Link>
                         </Button>
                       </>
-                    }
+                    )}
                   </div>
                 </div>
               </SheetContent>
@@ -189,5 +192,6 @@ export function Navbar() {
         </div>
       </div>
       <Cart open={isCartOpen} onOpenChange={setIsCartOpen} />
-    </header>);
+    </header>
+  );
 }
