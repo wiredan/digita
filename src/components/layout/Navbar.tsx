@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, Leaf, LogOut, LayoutDashboard, ShoppingCart, Globe, DollarSign } from 'lucide-react';
+import { Menu, Leaf, LogOut, LayoutDashboard, ShoppingCart, Globe, DollarSign, Bot } from 'lucide-react';
 import { useUserStore } from '@/stores/userStore';
 import {
   DropdownMenu,
@@ -20,6 +20,7 @@ import { Cart } from '../Cart';
 import { useAppStore, Currency, Language } from '@/stores/appStore';
 import { ThemeToggle } from '../ThemeToggle';
 import { Separator } from '@/components/ui/separator';
+import { useUIStore } from '@/stores/uiStore';
 const navLinks = [
   { to: '/', label: 'Marketplace' },
   { to: '/education', label: 'Education Hub' }
@@ -36,6 +37,7 @@ export function Navbar() {
   const setCurrency = useAppStore((s) => s.setCurrency);
   const language = useAppStore((s) => s.language);
   const setLanguage = useAppStore((s) => s.setLanguage);
+  const openAiChat = useUIStore((s) => s.openAiChat);
   const navigate = useNavigate();
   const handleLogout = () => {
     logout();
@@ -93,6 +95,9 @@ export function Navbar() {
                 {link.label}
               </NavLink>
             ))}
+             <Button variant="ghost" className="text-muted-foreground hover:text-primary" onClick={openAiChat}>
+              <Bot className="mr-2 h-4 w-4" /> DAN AI
+            </Button>
             {/* Action Icons */}
             <div className="flex items-center gap-2">
               <ThemeToggle />
@@ -140,7 +145,7 @@ export function Navbar() {
             </div>
           </nav>
           {/* Mobile Navigation */}
-          <div className="md:hidden">
+          <div className="md:hidden ml-auto">
             <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon">
@@ -166,6 +171,12 @@ export function Navbar() {
                         {link.label}
                       </NavLink>
                     ))}
+                    <button
+                      onClick={() => { openAiChat(); setIsMobileMenuOpen(false); }}
+                      className="text-lg text-muted-foreground transition-colors hover:text-primary text-left"
+                    >
+                      DAN AI
+                    </button>
                   </nav>
                   <Separator className="my-4" />
                   <div className="flex items-center justify-between">

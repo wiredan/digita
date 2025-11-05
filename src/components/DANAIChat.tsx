@@ -6,13 +6,22 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Bot, Send, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useUIStore } from '@/stores/uiStore';
 interface Message {
   id: number;
   text: string;
   sender: 'user' | 'ai';
 }
 export function DANAIChat() {
-  const [isOpen, setIsOpen] = useState(false);
+  const isAiChatOpen = useUIStore((s) => s.isAiChatOpen);
+  const toggleAiChat = useUIStore((s) => s.toggleAiChat);
+  const setAiChatOpen = (isOpen: boolean) => {
+    if (isOpen) {
+      useUIStore.getState().openAiChat();
+    } else {
+      useUIStore.getState().closeAiChat();
+    }
+  };
   const [messages, setMessages] = useState<Message[]>([
     { id: 1, text: "Hello! I'm DAN, your AI assistant. How can I help you with the agribusiness marketplace today?", sender: 'ai' },
   ]);
@@ -46,9 +55,10 @@ export function DANAIChat() {
     }
   }, [messages]);
   return (
-    <Sheet open={isOpen} onOpenChange={setIsOpen}>
+    <Sheet open={isAiChatOpen} onOpenChange={setAiChatOpen}>
       <SheetTrigger asChild>
         <Button
+          onClick={toggleAiChat}
           className="fixed bottom-6 right-6 h-16 w-16 rounded-full shadow-lg z-[100] flex items-center justify-center"
         >
           <Bot className="h-8 w-8" />

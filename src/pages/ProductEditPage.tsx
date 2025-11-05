@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { useForm } from 'react-hook-form';
+import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useUserStore } from '@/stores/userStore';
@@ -59,7 +59,7 @@ export function ProductEditPage() {
       });
     }
   }, [isEditMode, productToEdit, form]);
-  const onSubmit = async (values: ProductFormValues) => {
+  const onSubmit: SubmitHandler<ProductFormValues> = async (values) => {
     if (!user) return;
     setIsLoading(true);
     try {
