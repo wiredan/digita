@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { MainLayout } from '@/components/layout/MainLayout';
+
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -99,16 +99,14 @@ export function EducationDetailPage() {
     );
   };
   return (
-    <MainLayout>
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="py-16 md:py-24">
-          <Button variant="ghost" onClick={() => navigate(-1)} className="mb-8">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Education Hub
-          </Button>
-          {renderContent()}
-        </div>
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="py-16 md:py-24">
+        <Button variant="ghost" onClick={() => navigate(-1)} className="mb-8">
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Back to Education Hub
+        </Button>
+        {renderContent()}
       </div>
-    </MainLayout>
+    </div>
   );
 }

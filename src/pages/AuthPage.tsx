@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { MainLayout } from '@/components/layout/MainLayout';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -69,7 +68,7 @@ export function AuthPage() {
     }
   };
   return (
-    <MainLayout>
+    <>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="py-16 md:py-24 flex items-center justify-center">
           <Tabs defaultValue="login" className="w-[400px]">
@@ -172,6 +171,6 @@ export function AuthPage() {
         </div>
       </div>
       <Toaster richColors />
-    </MainLayout>
+    </>
   );
 }

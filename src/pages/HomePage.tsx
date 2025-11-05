@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { MainLayout } from '@/components/layout/MainLayout';
+
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Search, Loader2 } from 'lucide-react';
@@ -26,7 +26,7 @@ export function HomePage() {
     fetchProducts();
   }, []);
   return (
-    <MainLayout>
+    <>
       {/* Hero Section */}
       <section className="relative bg-secondary py-20 md:py-32">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent"></div>
@@ -78,6 +78,6 @@ export function HomePage() {
           )}
         </div>
       </div>
-    </MainLayout>
+    </>
   );
 }

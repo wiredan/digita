@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { MainLayout } from '@/components/layout/MainLayout';
+
 import { EducationCard } from '@/components/EducationCard';
 import { api } from '@/lib/api-client';
 import type { EducationContent } from '@shared/types';
@@ -23,7 +23,7 @@ export function EducationHubPage() {
     fetchArticles();
   }, []);
   return (
-    <MainLayout>
+    <>
       <section className="bg-secondary py-20 md:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl md:text-5xl font-extrabold font-display text-primary tracking-tight">
@@ -61,6 +61,6 @@ export function EducationHubPage() {
           )}
         </div>
       </div>
-    </MainLayout>
+    </>
   );
 }

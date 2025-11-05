@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { MainLayout } from '@/components/layout/MainLayout';
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -119,78 +119,76 @@ export function AdminPage() {
     ));
   };
   return (
-    <MainLayout>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="py-16 md:py-24">
-          <header className="mb-12">
-            <h1 className="text-4xl font-bold font-display text-foreground">Admin Panel</h1>
-            <p className="mt-2 text-lg text-muted-foreground">Oversee platform operations and manage users.</p>
-          </header>
-          {error && <div className="text-destructive text-center mb-4">{error}</div>}
-          <Tabs defaultValue="users">
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="users">User Management</TabsTrigger>
-              <TabsTrigger value="disputes">Disputes</TabsTrigger>
-              <TabsTrigger value="settings">Platform Settings</TabsTrigger>
-            </TabsList>
-            <TabsContent value="users" className="mt-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>All Users</CardTitle>
-                  <CardDescription>View and manage all registered users.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Name</TableHead>
-                        <TableHead>Email</TableHead>
-                        <TableHead>KYC Status</TableHead>
-                        <TableHead>Joined</TableHead>
-                        <TableHead className="text-right">Actions</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>{renderUserTable()}</TableBody>
-                  </Table>
-                </CardContent>
-              </Card>
-            </TabsContent>
-            <TabsContent value="disputes" className="mt-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Order Disputes</CardTitle>
-                  <CardDescription>Review and resolve user-reported disputes.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Order ID</TableHead>
-                        <TableHead>Product</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Date Raised</TableHead>
-                        <TableHead className="text-right">Actions</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>{renderDisputeTable()}</TableBody>
-                  </Table>
-                </CardContent>
-              </Card>
-            </TabsContent>
-            <TabsContent value="settings" className="mt-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Platform Settings</CardTitle>
-                  <CardDescription>Configure global settings for the marketplace.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground">Global settings form will be implemented here.</p>
-                </CardContent>
-              </Card>
-            </TabsContent>
-          </Tabs>
-        </div>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="py-16 md:py-24">
+        <header className="mb-12">
+          <h1 className="text-4xl font-bold font-display text-foreground">Admin Panel</h1>
+          <p className="mt-2 text-lg text-muted-foreground">Oversee platform operations and manage users.</p>
+        </header>
+        {error && <div className="text-destructive text-center mb-4">{error}</div>}
+        <Tabs defaultValue="users">
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="users">User Management</TabsTrigger>
+            <TabsTrigger value="disputes">Disputes</TabsTrigger>
+            <TabsTrigger value="settings">Platform Settings</TabsTrigger>
+          </TabsList>
+          <TabsContent value="users" className="mt-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>All Users</CardTitle>
+                <CardDescription>View and manage all registered users.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Name</TableHead>
+                      <TableHead>Email</TableHead>
+                      <TableHead>KYC Status</TableHead>
+                      <TableHead>Joined</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>{renderUserTable()}</TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          <TabsContent value="disputes" className="mt-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Order Disputes</CardTitle>
+                <CardDescription>Review and resolve user-reported disputes.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Order ID</TableHead>
+                      <TableHead>Product</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Date Raised</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>{renderDisputeTable()}</TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          <TabsContent value="settings" className="mt-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Platform Settings</CardTitle>
+                <CardDescription>Configure global settings for the marketplace.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">Global settings form will be implemented here.</p>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
       </div>
-    </MainLayout>
+    </div>
   );
 }

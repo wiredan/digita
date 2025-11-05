@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { MainLayout } from '@/components/layout/MainLayout';
+
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -131,7 +131,7 @@ export function ProductDetailPage() {
     );
   };
   return (
-    <MainLayout>
+    <>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="py-16 md:py-24">
           <Button variant="ghost" onClick={() => navigate(-1)} className="mb-8">
@@ -142,6 +142,6 @@ export function ProductDetailPage() {
         </div>
       </div>
       <Toaster richColors />
-    </MainLayout>
+    </>
   );
 }

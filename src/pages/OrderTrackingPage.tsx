@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { MainLayout } from '@/components/layout/MainLayout';
 import { Link, useParams, Navigate } from 'react-router-dom';
 import { useUserStore } from '@/stores/userStore';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -76,33 +75,29 @@ export function OrderTrackingPage() {
   }
   if (isLoading) {
     return (
-      <MainLayout>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
-          <div className="flex justify-center items-center h-64">
-            <Loader2 className="h-12 w-12 animate-spin text-primary" />
-          </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+        <div className="flex justify-center items-center h-64">
+          <Loader2 className="h-12 w-12 animate-spin text-primary" />
         </div>
-      </MainLayout>
+      </div>
     );
   }
   if (error || !order) {
     return (
-      <MainLayout>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="py-16 md:py-24 text-center">
-            <h1 className="text-4xl font-bold font-display">Order Not Found</h1>
-            <p className="mt-4 text-lg text-muted-foreground">
-              {error || "We couldn't find the order you're looking for."}
-            </p>
-            <Button asChild className="mt-8">
-              <Link to="/profile">
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Back to Profile
-              </Link>
-            </Button>
-          </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="py-16 md:py-24 text-center">
+          <h1 className="text-4xl font-bold font-display">Order Not Found</h1>
+          <p className="mt-4 text-lg text-muted-foreground">
+            {error || "We couldn't find the order you're looking for."}
+          </p>
+          <Button asChild className="mt-8">
+            <Link to="/profile">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Profile
+            </Link>
+          </Button>
         </div>
-      </MainLayout>
+      </div>
     );
   }
   const progressStatuses = ['placed', 'shipped', 'delivered'] as const;
@@ -113,7 +108,7 @@ export function OrderTrackingPage() {
     { name: 'Delivered', icon: <CheckCircle className="h-6 w-6" />, date: order.status === 'delivered' ? new Date(new Date(order.date).getTime() + 3 * 86400000).toISOString() : null },
   ];
   return (
-    <MainLayout>
+    <>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="py-16 md:py-24">
           <header className="mb-12">
@@ -225,6 +220,6 @@ export function OrderTrackingPage() {
         </div>
       </div>
       <Toaster richColors />
-    </MainLayout>
+    </>
   );
 }

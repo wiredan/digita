@@ -20,68 +20,63 @@ import { OrderTrackingPage } from '@/pages/OrderTrackingPage';
 import { EducationDetailPage } from '@/pages/EducationDetailPage';
 import { ProductEditPage } from '@/pages/ProductEditPage';
 import { CheckoutPage } from '@/pages/CheckoutPage';
+import { RootLayout } from '@/components/layout/RootLayout';
 import { App } from './App';
 export const router = createBrowserRouter([
   {
-    path: "/",
-    element: <HomePage />,
+    element: <RootLayout />,
     errorElement: <RouteErrorBoundary />,
-  },
-  {
-    path: "/product/:id",
-    element: <ProductDetailPage />,
-    errorElement: <RouteErrorBoundary />,
-  },
-  {
-    path: "/auth",
-    element: <AuthPage />,
-    errorElement: <RouteErrorBoundary />,
-  },
-  {
-    path: "/profile",
-    element: <ProfilePage />,
-    errorElement: <RouteErrorBoundary />,
-  },
-  {
-    path: "/profile/listings/new",
-    element: <ProductEditPage />,
-    errorElement: <RouteErrorBoundary />,
-  },
-  {
-    path: "/profile/listings/edit/:productId",
-    element: <ProductEditPage />,
-    errorElement: <RouteErrorBoundary />,
-  },
-  {
-    path: "/kyc",
-    element: <KycPage />,
-    errorElement: <RouteErrorBoundary />,
-  },
-  {
-    path: "/order/:orderId",
-    element: <OrderTrackingPage />,
-    errorElement: <RouteErrorBoundary />,
-  },
-  {
-    path: "/education",
-    element: <EducationHubPage />,
-    errorElement: <RouteErrorBoundary />,
-  },
-  {
-    path: "/education/:articleId",
-    element: <EducationDetailPage />,
-    errorElement: <RouteErrorBoundary />,
-  },
-  {
-    path: "/admin",
-    element: <AdminPage />,
-    errorElement: <RouteErrorBoundary />,
-  },
-  {
-    path: "/checkout",
-    element: <CheckoutPage />,
-    errorElement: <RouteErrorBoundary />,
-  },
+    children: [
+      {
+        path: "/",
+        element: <HomePage />,
+      },
+      {
+        path: "/product/:id",
+        element: <ProductDetailPage />,
+      },
+      {
+        path: "/auth",
+        element: <AuthPage />,
+      },
+      {
+        path: "/profile",
+        element: <ProfilePage />,
+      },
+      {
+        path: "/profile/listings/new",
+        element: <ProductEditPage />,
+      },
+      {
+        path: "/profile/listings/edit/:productId",
+        element: <ProductEditPage />,
+      },
+      {
+        path: "/kyc",
+        element: <KycPage />,
+      },
+      {
+        path: "/order/:orderId",
+        element: <OrderTrackingPage />,
+      },
+      {
+        path: "/education",
+        element: <EducationHubPage />,
+      },
+      {
+        path: "/education/:articleId",
+        element: <EducationDetailPage />,
+      },
+      {
+        path: "/admin",
+        element: <AdminPage />,
+      },
+      {
+        path: "/checkout",
+        element: <CheckoutPage />,
+      },
+    ]
+  }
 ]);
 // Do not touch this code
 createRoot(document.getElementById('root')!).render(

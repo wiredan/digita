@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { MainLayout } from '@/components/layout/MainLayout';
 import { useUserStore } from '@/stores/userStore';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -133,7 +132,7 @@ export function CheckoutPage() {
     }
   };
   return (
-    <MainLayout>
+    <>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="py-16 md:py-24">
           <header className="text-center mb-12">
@@ -184,6 +183,6 @@ export function CheckoutPage() {
         </div>
       </div>
       <Toaster richColors />
-    </MainLayout>
+    </>
   );
 }

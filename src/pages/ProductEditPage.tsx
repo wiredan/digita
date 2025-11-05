@@ -1,5 +1,4 @@
-import { useState } from 'react';
-import { MainLayout } from '@/components/layout/MainLayout';
+import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -15,18 +14,13 @@ import { toast } from 'sonner';
 import { Toaster } from '@/components/ui/sonner';
 import { ArrowLeft, Loader2 } from 'lucide-react';
 import type { Product } from '@shared/types';
-
 const productSchema = z.object({
   name: z.string().min(3, { message: "Product name must be at least 3 characters." }),
   description: z.string().min(10, { message: "Description must be at least 10 characters." }),
-  price: z.preprocess(
-    (val) => (val === "" ? undefined : Number(val)),
-    z.coerce.number({ invalid_type_error: "Price must be a number." }).positive({ message: "Price must be a positive number." })
-  ),
+  price: z.coerce.number().positive({ message: "Price must be a positive number." }),
   category: z.string().min(1, { message: "Please select a category." }),
   imageUrl: z.string().url({ message: "Please enter a valid image URL." }),
 });
-
 type ProductFormValues = z.infer<typeof productSchema>;
 const categories = ["Fruits", "Vegetables", "Bakery", "Dairy & Eggs", "Pantry"];
 export function ProductEditPage() {
@@ -41,16 +35,19 @@ export function ProductEditPage() {
   const productToEdit = isEditMode ? userProducts.find(p => p.id === productId) : null;
   const form = useForm<ProductFormValues>({
     resolver: zodResolver(productSchema),
-    defaultValues: isEditMode && productToEdit ? {
-      ...productToEdit,
-    } : {
+    defaultValues: {
       name: "",
       description: "",
-      price: undefined,
+      price: 0,
       category: "",
       imageUrl: "",
     },
   });
+  useEffect(() => {
+    if (isEditMode && productToEdit) {
+      form.reset(productToEdit);
+    }
+  }, [isEditMode, productToEdit, form]);
   const onSubmit = async (values: ProductFormValues) => {
     if (!user) return;
     setIsLoading(true);
@@ -73,7 +70,7 @@ export function ProductEditPage() {
     }
   };
   return (
-    <MainLayout>
+    <>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="py-16 md:py-24">
           <div className="max-w-3xl mx-auto">
@@ -145,6 +142,6 @@ export function ProductEditPage() {
         </div>
       </div>
       <Toaster richColors />
-    </MainLayout>
+    </>
   );
 }
