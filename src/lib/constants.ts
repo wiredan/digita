@@ -1,4 +1,4 @@
-import type { Product } from '@shared/types';
+import type { Product, UserProfile, Order } from '@shared/types';
 export const MOCK_PRODUCTS: Product[] = [
   {
     id: 'prod_01',
@@ -71,5 +71,40 @@ export const MOCK_PRODUCTS: Product[] = [
     imageUrl: 'https://images.unsplash.com/photo-1598164074852-36b745f586e3?q=80&w=800&auto=format&fit=crop',
     sellerName: 'Green Valley Farms',
     category: 'Vegetables',
+  },
+];
+export const MOCK_USER_PROFILE: UserProfile = {
+  id: 'user_123',
+  name: 'Alex Doe',
+  email: 'alex.doe@example.com',
+  kycStatus: 'verified',
+  avatarUrl: 'https://i.pravatar.cc/150?u=alexdoe',
+};
+export const MOCK_ORDERS: Order[] = [
+  {
+    id: 'order_01',
+    orderNumber: 'VD-845621',
+    product: MOCK_PRODUCTS[1],
+    buyerId: 'user_123',
+    status: 'delivered',
+    date: '2023-10-15T14:48:00.000Z',
+    trackingNumber: '1Z999AA10123456784',
+  },
+  {
+    id: 'order_02',
+    orderNumber: 'VD-845620',
+    product: MOCK_PRODUCTS[4],
+    buyerId: 'user_123',
+    status: 'shipped',
+    date: '2023-10-28T10:20:00.000Z',
+    trackingNumber: '1Z999AA10123456785',
+  },
+  {
+    id: 'order_03',
+    orderNumber: 'VD-845619',
+    product: MOCK_PRODUCTS[6],
+    buyerId: 'user_123',
+    status: 'placed',
+    date: '2023-10-30T18:05:00.000Z',
   },
 ];

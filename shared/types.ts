@@ -3,9 +3,26 @@ export interface ApiResponse<T = unknown> {
   data?: T;
   error?: string;
 }
-export interface Product {
+// Boilerplate types (to fix build errors from untouched template files)
+export interface User {
   id: string;
   name: string;
+}
+export interface Chat {
+  id: string;
+  title: string;
+}
+export interface ChatMessage {
+  id: string;
+  chatId: string;
+  userId: string;
+  text: string;
+  ts: number;
+}
+// Verdant Application Types
+export interface Product {
+  id: string;
+  name:string;
   description: string;
   price: number;
   imageUrl: string;
@@ -28,4 +45,5 @@ export interface Order {
   status: OrderStatus;
   date: string; // ISO 8601 date string
   trackingNumber?: string;
+  orderNumber: string;
 }
