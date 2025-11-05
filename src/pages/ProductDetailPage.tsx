@@ -8,10 +8,12 @@ import { ShoppingCart, ShieldCheck, ArrowLeft } from 'lucide-react';
 import { useUserStore } from '@/stores/userStore';
 import { toast } from 'sonner';
 import { Toaster } from '@/components/ui/sonner';
+import type { Order } from '@shared/types';
 export function ProductDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const user = useUserStore((s) => s.user);
+  const addOrder = useUserStore((s) => s.addOrder);
   const product = MOCK_PRODUCTS.find((p) => p.id === id);
   const handleBuyNow = () => {
     if (!user) {
@@ -32,9 +34,23 @@ export function ProductDetailPage() {
       });
       return;
     }
-    toast.success(`Purchase initiated for ${product?.name}!`, {
-      description: 'This is a mock action. No real transaction has occurred.',
+    if (!product) return;
+    // Create a new mock order
+    const newOrder: Order = {
+      id: `order_${Date.now()}`,
+      orderNumber: `VD-${Math.floor(Math.random() * 900000) + 100000}`,
+      product: product,
+      buyerId: user.id,
+      status: 'placed',
+      date: new Date().toISOString(),
+    };
+    addOrder(newOrder);
+    toast.success(`Purchase successful for ${product.name}!`, {
+      description: 'Redirecting to your order details...',
     });
+    setTimeout(() => {
+      navigate(`/order/${newOrder.id}`);
+    }, 1500);
   };
   if (!product) {
     return (

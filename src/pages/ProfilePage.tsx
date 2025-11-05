@@ -1,13 +1,12 @@
 import { MainLayout } from '@/components/layout/MainLayout';
 import { useUserStore } from '@/stores/userStore';
-import { Navigate, Link } from 'react-router-dom';
+import { Navigate, Link, useNavigate } from 'react-router-dom';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { MOCK_ORDERS } from '@/lib/constants';
 import { CheckCircle, Clock, AlertCircle, Truck, Package } from 'lucide-react';
 import { format } from 'date-fns';
 const kycStatusMap = {
@@ -25,6 +24,8 @@ const orderStatusMap = {
 };
 export function ProfilePage() {
   const user = useUserStore(s => s.user);
+  const orders = useUserStore(s => s.orders);
+  const navigate = useNavigate();
   if (!user) {
     return <Navigate to="/auth" replace />;
   }
@@ -73,7 +74,7 @@ export function ProfilePage() {
                   <Card>
                     <CardHeader>
                       <CardTitle>Your Orders</CardTitle>
-                      <CardDescription>A list of your recent purchases.</CardDescription>
+                      <CardDescription>A list of your recent purchases. Click an order to see details.</CardDescription>
                     </CardHeader>
                     <CardContent>
                       <Table>
@@ -87,8 +88,8 @@ export function ProfilePage() {
                           </TableRow>
                         </TableHeader>
                         <TableBody>
-                          {MOCK_ORDERS.map(order => (
-                            <TableRow key={order.id}>
+                          {orders.map(order => (
+                            <TableRow key={order.id} className="cursor-pointer hover:bg-muted/50" onClick={() => navigate(`/order/${order.id}`)}>
                               <TableCell className="font-medium">{order.orderNumber}</TableCell>
                               <TableCell>{order.product.name}</TableCell>
                               <TableCell>{format(new Date(order.date), 'MMM d, yyyy')}</TableCell>

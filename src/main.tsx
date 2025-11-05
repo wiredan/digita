@@ -17,6 +17,7 @@ import { ProfilePage } from '@/pages/ProfilePage';
 import { KycPage } from '@/pages/KycPage';
 import { EducationHubPage } from '@/pages/EducationHubPage';
 import { AdminPage } from '@/pages/AdminPage';
+import { OrderTrackingPage } from '@/pages/OrderTrackingPage';
 const router = createBrowserRouter([
   {
     path: "/",
@@ -41,6 +42,11 @@ const router = createBrowserRouter([
   {
     path: "/kyc",
     element: <KycPage />,
+    errorElement: <RouteErrorBoundary />,
+  },
+  {
+    path: "/order/:orderId",
+    element: <OrderTrackingPage />,
     errorElement: <RouteErrorBoundary />,
   },
   {
