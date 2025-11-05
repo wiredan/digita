@@ -1,21 +1,40 @@
+import { useState, useEffect } from 'react';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { Link, useParams, useNavigate } from 'react-router-dom';
-import { MOCK_PRODUCTS } from '@/lib/constants';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
-import { ShoppingCart, ShieldCheck, ArrowLeft } from 'lucide-react';
+import { ShoppingCart, ShieldCheck, ArrowLeft, Loader2 } from 'lucide-react';
 import { useUserStore } from '@/stores/userStore';
 import { toast } from 'sonner';
 import { Toaster } from '@/components/ui/sonner';
-import type { Order } from '@shared/types';
+import type { Order, Product } from '@shared/types';
+import { api } from '@/lib/api-client';
+import { Skeleton } from '@/components/ui/skeleton';
 export function ProductDetailPage() {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const user = useUserStore((s) => s.user);
   const addOrder = useUserStore((s) => s.addOrder);
   const addToCart = useUserStore((s) => s.addToCart);
-  const product = MOCK_PRODUCTS.find((p) => p.id === id);
+  const [product, setProduct] = useState<Product | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  useEffect(() => {
+    if (!id) return;
+    const fetchProduct = async () => {
+      try {
+        setIsLoading(true);
+        const data = await api<Product>(`/api/products/${id}`);
+        setProduct(data);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to fetch product.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchProduct();
+  }, [id]);
   const handleAddToCart = () => {
     if (!product) return;
     addToCart(product);
@@ -24,19 +43,13 @@ export function ProductDetailPage() {
   const handleBuyNow = () => {
     if (!user) {
       toast.error('Please log in to make a purchase.', {
-        action: {
-          label: 'Log In',
-          onClick: () => navigate('/auth'),
-        },
+        action: { label: 'Log In', onClick: () => navigate('/auth') },
       });
       return;
     }
     if (user.kycStatus !== 'verified') {
       toast.error('Please complete KYC verification to trade.', {
-        action: {
-          label: 'Verify Now',
-          onClick: () => navigate('/kyc'),
-        },
+        action: { label: 'Verify Now', onClick: () => navigate('/kyc') },
       });
       return;
     }
@@ -57,26 +70,70 @@ export function ProductDetailPage() {
       navigate(`/order/${newOrder.id}`);
     }, 1500);
   };
-  if (!product) {
+  const renderContent = () => {
+    if (isLoading) {
+      return (
+        <div className="grid md:grid-cols-2 gap-12 items-start">
+          <Skeleton className="w-full aspect-square rounded-lg" />
+          <div className="space-y-6">
+            <Skeleton className="h-6 w-1/4" />
+            <Skeleton className="h-12 w-3/4" />
+            <Skeleton className="h-6 w-1/2" />
+            <Skeleton className="h-10 w-1/3" />
+            <Skeleton className="h-24 w-full" />
+            <div className="flex gap-4 pt-4">
+              <Skeleton className="h-12 w-36" />
+              <Skeleton className="h-12 w-36" />
+            </div>
+          </div>
+        </div>
+      );
+    }
+    if (error || !product) {
+      return (
+        <div className="text-center">
+          <h1 className="text-4xl font-bold font-display">Product Not Found</h1>
+          <p className="mt-4 text-lg text-muted-foreground">
+            {error || "We couldn't find the product you're looking for."}
+          </p>
+          <Button asChild className="mt-8">
+            <Link to="/">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Marketplace
+            </Link>
+          </Button>
+        </div>
+      );
+    }
     return (
-      <MainLayout>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="py-16 md:py-24 text-center">
-            <h1 className="text-4xl font-bold font-display">Product Not Found</h1>
-            <p className="mt-4 text-lg text-muted-foreground">
-              We couldn't find the product you're looking for.
-            </p>
-            <Button asChild className="mt-8">
-              <Link to="/">
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Back to Marketplace
-              </Link>
+      <div className="grid md:grid-cols-2 gap-12 items-start">
+        <div className="w-full">
+          <AspectRatio ratio={1} className="bg-muted rounded-lg overflow-hidden">
+            <img src={product.imageUrl} alt={product.name} className="object-cover w-full h-full" />
+          </AspectRatio>
+        </div>
+        <div className="space-y-6">
+          <Badge variant="secondary">{product.category}</Badge>
+          <h1 className="text-4xl lg:text-5xl font-bold font-display text-foreground">{product.name}</h1>
+          <p className="text-lg text-muted-foreground">
+            Sold by <span className="font-semibold text-primary">{product.sellerName}</span>
+          </p>
+          <p className="text-4xl font-bold text-primary">${product.price.toFixed(2)}</p>
+          <p className="text-base text-muted-foreground leading-relaxed">{product.description}</p>
+          <div className="flex flex-col sm:flex-row gap-4 pt-4">
+            <Button size="lg" className="w-full sm:w-auto" onClick={handleBuyNow}>
+              <ShieldCheck className="mr-2 h-5 w-5" />
+              Buy Now
+            </Button>
+            <Button size="lg" variant="outline" className="w-full sm:w-auto" onClick={handleAddToCart}>
+              <ShoppingCart className="mr-2 h-5 w-5" />
+              Add to Cart
             </Button>
           </div>
         </div>
-      </MainLayout>
+      </div>
     );
-  }
+  };
   return (
     <MainLayout>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -85,40 +142,7 @@ export function ProductDetailPage() {
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to Marketplace
           </Button>
-          <div className="grid md:grid-cols-2 gap-12 items-start">
-            <div className="w-full">
-              <AspectRatio ratio={1} className="bg-muted rounded-lg overflow-hidden">
-                <img
-                  src={product.imageUrl}
-                  alt={product.name}
-                  className="object-cover w-full h-full"
-                />
-              </AspectRatio>
-            </div>
-            <div className="space-y-6">
-              <Badge variant="secondary">{product.category}</Badge>
-              <h1 className="text-4xl lg:text-5xl font-bold font-display text-foreground">
-                {product.name}
-              </h1>
-              <p className="text-lg text-muted-foreground">
-                Sold by <span className="font-semibold text-primary">{product.sellerName}</span>
-              </p>
-              <p className="text-4xl font-bold text-primary">${product.price.toFixed(2)}</p>
-              <p className="text-base text-muted-foreground leading-relaxed">
-                {product.description}
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                <Button size="lg" className="w-full sm:w-auto" onClick={handleBuyNow}>
-                  <ShieldCheck className="mr-2 h-5 w-5" />
-                  Buy Now
-                </Button>
-                <Button size="lg" variant="outline" className="w-full sm:w-auto" onClick={handleAddToCart}>
-                  <ShoppingCart className="mr-2 h-5 w-5" />
-                  Add to Cart
-                </Button>
-              </div>
-            </div>
-          </div>
+          {renderContent()}
         </div>
       </div>
       <Toaster richColors />

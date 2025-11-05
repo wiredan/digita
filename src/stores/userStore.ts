@@ -1,13 +1,13 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import type { UserProfile, KycStatus, Order, Product } from '@shared/types';
-import { MOCK_ORDERS, MOCK_USER_PRODUCTS } from '@/lib/constants';
+import type { UserProfile, KycStatus, Order, Product, LoginResponse } from '@shared/types';
+import { api } from '@/lib/api-client';
 interface UserState {
   user: UserProfile | null;
   orders: Order[];
   products: Product[];
   cart: Product[];
-  login: (user: UserProfile) => void;
+  login: (email: string, password: string) => Promise<void>;
   logout: () => void;
   updateKycStatus: (status: KycStatus) => void;
   addOrder: (order: Order) => void;
@@ -24,7 +24,13 @@ export const useUserStore = create<UserState>()(
       orders: [],
       products: [],
       cart: [],
-      login: (user) => set({ user, orders: MOCK_ORDERS, products: MOCK_USER_PRODUCTS, cart: [] }),
+      login: async (email, password) => {
+        const { user, orders, products } = await api<LoginResponse>('/api/auth/login', {
+          method: 'POST',
+          body: JSON.stringify({ email, password }),
+        });
+        set({ user, orders, products, cart: [] });
+      },
       logout: () => set({ user: null, orders: [], products: [], cart: [] }),
       updateKycStatus: (status) =>
         set((state) => ({

@@ -47,3 +47,8 @@ export interface Order {
   trackingNumber?: string;
   orderNumber: string;
 }
+export interface LoginResponse {
+    user: UserProfile;
+    orders: Order[];
+    products: Product[];
+}

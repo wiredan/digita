@@ -1,8 +1,8 @@
+import { useState } from 'react';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -10,9 +10,9 @@ import * as z from 'zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useUserStore } from '@/stores/userStore';
 import { useNavigate } from 'react-router-dom';
-import { MOCK_USER_PROFILE } from '@/lib/constants';
 import { toast } from 'sonner';
 import { Toaster } from '@/components/ui/sonner';
+import { Loader2 } from 'lucide-react';
 const loginSchema = z.object({
   email: z.string().email({ message: "Invalid email address." }),
   password: z.string().min(6, { message: "Password must be at least 6 characters." }),
@@ -25,27 +25,37 @@ const signupSchema = z.object({
 export function AuthPage() {
   const navigate = useNavigate();
   const login = useUserStore(s => s.login);
+  const [isLoading, setIsLoading] = useState(false);
   const loginForm = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
-    defaultValues: { email: "", password: "" },
+    defaultValues: { email: "alex.doe@example.com", password: "password123" },
   });
   const signupForm = useForm<z.infer<typeof signupSchema>>({
     resolver: zodResolver(signupSchema),
     defaultValues: { name: "", email: "", password: "" },
   });
-  const onLoginSubmit = (values: z.infer<typeof loginSchema>) => {
-    console.log("Login submitted", values);
-    toast.success("Login successful! Redirecting...");
-    // Mock login:
-    login(MOCK_USER_PROFILE);
-    setTimeout(() => navigate('/profile'), 1500);
+  const onLoginSubmit = async (values: z.infer<typeof loginSchema>) => {
+    setIsLoading(true);
+    try {
+      await login(values.email, values.password);
+      toast.success("Login successful! Redirecting...");
+      setTimeout(() => navigate('/profile'), 1500);
+    } catch (error) {
+      toast.error("Login failed. Please check your credentials.");
+      setIsLoading(false);
+    }
   };
-  const onSignupSubmit = (values: z.infer<typeof signupSchema>) => {
-    console.log("Signup submitted", values);
-    toast.success("Account created! Redirecting...");
-    // Mock signup:
-    login({ ...MOCK_USER_PROFILE, name: values.name, email: values.email });
-    setTimeout(() => navigate('/profile'), 1500);
+  const onSignupSubmit = async (values: z.infer<typeof signupSchema>) => {
+    setIsLoading(true);
+    try {
+      // Mock signup still uses login since we don't have a signup endpoint yet
+      await login(values.email, values.password);
+      toast.success("Account created! Redirecting...");
+      setTimeout(() => navigate('/profile'), 1500);
+    } catch (error) {
+      toast.error("Signup failed. Please try again.");
+      setIsLoading(false);
+    }
   };
   return (
     <MainLayout>
@@ -93,7 +103,10 @@ export function AuthPage() {
                       />
                     </CardContent>
                     <CardFooter>
-                      <Button type="submit" className="w-full">Log In</Button>
+                      <Button type="submit" className="w-full" disabled={isLoading}>
+                        {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                        Log In
+                      </Button>
                     </CardFooter>
                   </form>
                 </Form>
@@ -149,7 +162,10 @@ export function AuthPage() {
                       />
                     </CardContent>
                     <CardFooter>
-                      <Button type="submit" className="w-full">Create Account</Button>
+                      <Button type="submit" className="w-full" disabled={isLoading}>
+                        {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                        Create Account
+                      </Button>
                     </CardFooter>
                   </form>
                 </Form>
