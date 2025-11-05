@@ -8,14 +8,14 @@ import { ShoppingCart, ShieldCheck, ArrowLeft, Loader2 } from 'lucide-react';
 import { useUserStore } from '@/stores/userStore';
 import { toast } from 'sonner';
 import { Toaster } from '@/components/ui/sonner';
-import type { Order, Product } from '@shared/types';
+import type { Product } from '@shared/types';
 import { api } from '@/lib/api-client';
 import { Skeleton } from '@/components/ui/skeleton';
 export function ProductDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const user = useUserStore((s) => s.user);
-  const addOrder = useUserStore((s) => s.addOrder);
+  const placeOrder = useUserStore((s) => s.placeOrder);
   const addToCart = useUserStore((s) => s.addToCart);
   const [product, setProduct] = useState<Product | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -40,7 +40,7 @@ export function ProductDetailPage() {
     addToCart(product);
     toast.success(`${product.name} added to cart!`);
   };
-  const handleBuyNow = () => {
+  const handleBuyNow = async () => {
     if (!user) {
       toast.error('Please log in to make a purchase.', {
         action: { label: 'Log In', onClick: () => navigate('/auth') },
@@ -54,21 +54,17 @@ export function ProductDetailPage() {
       return;
     }
     if (!product) return;
-    const newOrder: Order = {
-      id: `order_${Date.now()}`,
-      orderNumber: `VD-${Math.floor(Math.random() * 900000) + 100000}`,
-      product: product,
-      buyerId: user.id,
-      status: 'placed',
-      date: new Date().toISOString(),
-    };
-    addOrder(newOrder);
-    toast.success(`Purchase successful for ${product.name}!`, {
-      description: 'Redirecting to your order details...',
-    });
-    setTimeout(() => {
-      navigate(`/order/${newOrder.id}`);
-    }, 1500);
+    try {
+      const newOrder = await placeOrder([product], product.price);
+      toast.success(`Purchase successful for ${product.name}!`, {
+        description: 'Redirecting to your order details...',
+      });
+      setTimeout(() => {
+        navigate(`/order/${newOrder.id}`);
+      }, 1500);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Failed to place order.");
+    }
   };
   const renderContent = () => {
     if (isLoading) {

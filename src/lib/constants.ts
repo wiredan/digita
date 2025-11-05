@@ -84,7 +84,8 @@ export const MOCK_ORDERS: Order[] = [
   {
     id: 'order_01',
     orderNumber: 'VD-845621',
-    product: MOCK_PRODUCTS[1],
+    items: [MOCK_PRODUCTS[1]],
+    totalAmount: MOCK_PRODUCTS[1].price,
     buyerId: 'user_123',
     status: 'delivered',
     date: '2023-10-15T14:48:00.000Z',
@@ -93,7 +94,8 @@ export const MOCK_ORDERS: Order[] = [
   {
     id: 'order_02',
     orderNumber: 'VD-845620',
-    product: MOCK_PRODUCTS[4],
+    items: [MOCK_PRODUCTS[4]],
+    totalAmount: MOCK_PRODUCTS[4].price,
     buyerId: 'user_123',
     status: 'shipped',
     date: '2023-10-28T10:20:00.000Z',
@@ -102,7 +104,8 @@ export const MOCK_ORDERS: Order[] = [
   {
     id: 'order_03',
     orderNumber: 'VD-845619',
-    product: MOCK_PRODUCTS[6],
+    items: [MOCK_PRODUCTS[6]],
+    totalAmount: MOCK_PRODUCTS[6].price,
     buyerId: 'user_123',
     status: 'placed',
     date: '2023-10-30T18:05:00.000Z',

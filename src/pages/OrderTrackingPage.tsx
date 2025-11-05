@@ -2,15 +2,30 @@ import { useState, useEffect } from 'react';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { Link, useParams, Navigate } from 'react-router-dom';
 import { useUserStore } from '@/stores/userStore';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { ArrowLeft, Package, Truck, CheckCircle, Home, Loader2 } from 'lucide-react';
+import { ArrowLeft, Package, Truck, CheckCircle, Home, Loader2, AlertCircle } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import type { Order, OrderStatus } from '@shared/types';
 import { api } from '@/lib/api-client';
 import { Skeleton } from '@/components/ui/skeleton';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { toast } from 'sonner';
+import { Toaster } from '@/components/ui/sonner';
 export function OrderTrackingPage() {
   const { orderId } = useParams();
   const user = useUserStore((s) => s.user);
@@ -35,6 +50,11 @@ export function OrderTrackingPage() {
       fetchOrder();
     }
   }, [orderId, localOrder]);
+  const handleDisputeSubmit = () => {
+    toast.success("Dispute submitted successfully.", {
+      description: "Our support team will review your case and get back to you shortly.",
+    });
+  };
   if (!user) {
     return <Navigate to="/auth" replace />;
   }
@@ -151,9 +171,39 @@ export function OrderTrackingPage() {
                 </div>
               </div>
             </CardContent>
+            <CardFooter className="bg-muted/50 px-6 py-4 border-t">
+              <div className="flex items-center justify-between w-full">
+                <p className="text-sm text-muted-foreground">Having an issue with your order?</p>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="destructive">
+                      <AlertCircle className="mr-2 h-4 w-4" />
+                      Dispute Order
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Submit a Dispute for Order {order.orderNumber}</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Please describe the issue with your order in detail. Our support team will review your case.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <div className="grid w-full gap-1.5 my-4">
+                      <Label htmlFor="dispute-message">Your Message</Label>
+                      <Textarea placeholder="e.g., The items I received were damaged..." id="dispute-message" />
+                    </div>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction onClick={handleDisputeSubmit}>Submit Dispute</AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </div>
+            </CardFooter>
           </Card>
         </div>
       </div>
+      <Toaster richColors />
     </MainLayout>
   );
 }
