@@ -62,4 +62,6 @@ This project is configured for seamless deployment to Cloudflare Pages.
     ```
     Make sure to configure any required secrets (e.g., `PAYSTACK_SECRET_KEY`) in your Cloudflare Pages project settings under **Settings > Environment variables**.
 Alternatively, you can connect your GitHub repository to Cloudflare Pages for automated CI/CD deployments.
+### Note on Configuration
+This project is pre-configured to deploy correctly on Cloudflare Pages. The necessary build commands and output directories are managed by the platform based on standard Vite project structures and the `wrangler.jsonc` file. You do not need a separate `.page.toml` file in the repository for a successful deployment.
 [cloudflarebutton]
