@@ -49,7 +49,7 @@ export function DANAIChat() {
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
         <Button
-          className="fixed bottom-6 right-6 h-16 w-16 rounded-full shadow-lg z-50 flex items-center justify-center"
+          className="fixed bottom-6 right-6 h-16 w-16 rounded-full shadow-lg z-[100] flex items-center justify-center"
         >
           <Bot className="h-8 w-8" />
         </Button>
