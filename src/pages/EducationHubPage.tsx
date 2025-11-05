@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { EducationCard } from '@/components/EducationCard';
 import { api } from '@/lib/api-client';
-import type { EducationContent } from '@/lib/constants';
+import type { EducationContent } from '@shared/types';
 import { Skeleton } from '@/components/ui/skeleton';
 export function EducationHubPage() {
   const [articles, setArticles] = useState<EducationContent[]>([]);
@@ -27,7 +27,7 @@ export function EducationHubPage() {
       <section className="bg-secondary py-20 md:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl md:text-5xl font-extrabold font-display text-primary tracking-tight">
-            Verdant Education Hub
+            DAN Education Hub
           </h1>
           <p className="mt-6 max-w-2xl mx-auto text-lg text-muted-foreground">
             Your source for knowledge in modern agribusiness. Explore articles, best practices, and market insights to help you grow.

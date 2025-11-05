@@ -32,10 +32,10 @@ export function HomePage() {
         <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent"></div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative">
           <h1 className="text-4xl md:text-6xl font-extrabold font-display text-primary tracking-tight">
-            The Digital Root of Modern Agribusiness
+            DECENTRALIZED AGRIBUSINESS NETWORK
           </h1>
           <p className="mt-6 max-w-2xl mx-auto text-lg text-muted-foreground">
-            A secure, decentralized marketplace connecting farmers and agribusiness participants with integrated payments, logistics, and AI support.
+            A full-stack agribusiness marketplace that allows farmers and agribusiness participants to trade crops, manage orders, interact with AI, and handle payments securely.
           </p>
           <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
             <Button size="lg" className="text-base">

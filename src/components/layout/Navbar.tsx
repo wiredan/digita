@@ -23,7 +23,6 @@ import { Separator } from '@/components/ui/separator';
 const navLinks = [
 { to: '/', label: 'Marketplace' },
 { to: '/education', label: 'Education Hub' }];
-
 const currencies: Currency[] = ['USD', 'NGN', 'VND'];
 const languages: Language[] = ['English', 'Hausa', 'Yoruba', 'Igbo', 'Vietnamese'];
 export function Navbar() {
@@ -72,14 +71,13 @@ export function Navbar() {
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>;
-
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
             <Leaf className="h-7 w-7 text-primary" />
-            <span className="text-xl font-bold font-display text-primary">Verdant</span>
+            <span className="text-xl font-bold font-display text-primary">DAN</span>
           </Link>
           <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
             {navLinks.map((link) =>
@@ -89,7 +87,6 @@ export function Navbar() {
               className={({ isActive }) =>
               `${commonLinkClasses} ${isActive ? activeLinkClasses : 'text-muted-foreground'}`
               }>
-
                 {link.label}
               </NavLink>
             )}
@@ -127,7 +124,6 @@ export function Navbar() {
             </Button>
             {user ?
             <UserMenu /> :
-
             <>
                 <Button variant="ghost" asChild>
                   <Link to="/auth">Log In</Link>
@@ -150,7 +146,7 @@ export function Navbar() {
                 <div className="flex flex-col p-4">
                   <Link to="/" className="flex items-center gap-2 mb-8" onClick={() => setIsMobileMenuOpen(false)}>
                     <Leaf className="h-7 w-7 text-primary" />
-                    <span className="text-xl font-bold font-display text-primary">Verdant</span>
+                    <span className="text-xl font-bold font-display text-primary">DAN</span>
                   </Link>
                   <nav className="flex flex-col space-y-4">
                     {navLinks.map((link) =>
@@ -161,7 +157,6 @@ export function Navbar() {
                       className={({ isActive }) =>
                       `text-lg ${commonLinkClasses} ${isActive ? activeLinkClasses : 'text-muted-foreground'}`
                       }>
-
                         {link.label}
                       </NavLink>
                     )}
@@ -174,7 +169,6 @@ export function Navbar() {
                         </Button>
                         <Button onClick={() => {handleLogout();setIsMobileMenuOpen(false);}}>Log Out</Button>
                       </> :
-
                     <>
                         <Button variant="ghost" asChild>
                           <Link to="/auth" onClick={() => setIsMobileMenuOpen(false)}>Log In</Link>
@@ -193,5 +187,4 @@ export function Navbar() {
       </div>
       <Cart open={isCartOpen} onOpenChange={setIsCartOpen} />
     </header>);
-
 }

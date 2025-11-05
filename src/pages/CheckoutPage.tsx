@@ -34,7 +34,7 @@ export function CheckoutPage() {
   const [isLoading, setIsLoading] = useState(false);
   const shippingForm = useForm<z.infer<typeof shippingSchema>>({
     resolver: zodResolver(shippingSchema),
-    defaultValues: { address: "123 Verdant Lane", city: "Farmville", zip: "54321" },
+    defaultValues: { address: "123 Agri Network St", city: "Farmville", zip: "54321" },
   });
   const paymentForm = useForm<z.infer<typeof paymentSchema>>({
     resolver: zodResolver(paymentSchema),

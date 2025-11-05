@@ -178,7 +178,7 @@ export function OrderTrackingPage() {
                     <div>
                       <p className="font-semibold">{user.name}</p>
                       <p className="text-sm text-muted-foreground">
-                        123 Verdant Lane<br />
+                        123 Agri Network St<br />
                         Farmville, AG 54321<br />
                         United States
                       </p>
@@ -206,9 +206,9 @@ export function OrderTrackingPage() {
                     </AlertDialogHeader>
                     <div className="grid w-full gap-1.5 my-4">
                       <Label htmlFor="dispute-message">Your Message</Label>
-                      <Textarea 
-                        placeholder="e.g., The items I received were damaged..." 
-                        id="dispute-message" 
+                      <Textarea
+                        placeholder="e.g., The items I received were damaged..."
+                        id="dispute-message"
                         value={disputeMessage}
                         onChange={(e) => setDisputeMessage(e.target.value)}
                       />

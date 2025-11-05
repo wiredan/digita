@@ -13,7 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { api } from '@/lib/api-client';
-import type { AdminUser, Dispute } from '@/lib/constants';
+import type { AdminUser, Dispute } from '@shared/types';
 import { Skeleton } from '@/components/ui/skeleton';
 const kycStatusMap = {
   verified: { text: 'Verified', variant: 'default', icon: <CheckCircle className="mr-2 h-4 w-4" /> },
@@ -25,6 +25,7 @@ const disputeStatusMap = {
   open: { text: 'Open', variant: 'destructive' },
   resolved: { text: 'Resolved', variant: 'default' },
   escalated: { text: 'Escalated', variant: 'secondary' },
+  disputed: { text: 'Disputed', variant: 'destructive' },
 };
 export function AdminPage() {
   const [users, setUsers] = useState<AdminUser[]>([]);
