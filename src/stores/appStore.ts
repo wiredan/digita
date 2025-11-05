@@ -1,8 +1,8 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 export type Theme = 'light' | 'dark';
-export type Currency = 'USD' | 'NGN' | 'VND';
-export type Language = 'English' | 'Hausa' | 'Yoruba' | 'Igbo' | 'Vietnamese';
+export type Currency = 'USD' | 'NGN' | 'VND' | 'EUR' | 'GBP' | 'JPY';
+export type Language = 'English' | 'Hausa' | 'Yoruba' | 'Igbo' | 'Vietnamese' | 'Spanish' | 'French' | 'German' | 'Chinese';
 interface AppState {
   theme: Theme;
   currency: Currency;

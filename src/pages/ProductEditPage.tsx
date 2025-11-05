@@ -17,12 +17,12 @@ import type { Product } from '@shared/types';
 const productSchema = z.object({
   name: z.string().min(3, { message: "Product name must be at least 3 characters." }),
   description: z.string().min(10, { message: "Description must be at least 10 characters." }),
-  price: z.number().positive({ message: "Price must be a positive number." }),
+  price: z.coerce.number().positive({ message: "Price must be a positive number." }),
   category: z.string().min(1, { message: "Please select a category." }),
   imageUrl: z.string().url({ message: "Please enter a valid image URL." }),
 });
 type ProductFormValues = z.infer<typeof productSchema>;
-const categories = ["Fruits", "Vegetables", "Bakery", "Dairy & Eggs", "Pantry"];
+const categories = ["Grains & Cereals", "Fruits", "Vegetables", "Tubers", "Legumes", "Nuts & Seeds", "Herbs & Spices"];
 export function ProductEditPage() {
   const navigate = useNavigate();
   const { productId } = useParams();
@@ -44,8 +44,19 @@ export function ProductEditPage() {
     },
   });
   useEffect(() => {
+    if (user && user.kycStatus !== 'verified') {
+      toast.error("You must be KYC verified to list products.", {
+        description: "Redirecting to your profile...",
+      });
+      setTimeout(() => navigate('/profile'), 2000);
+    }
+  }, [user, navigate]);
+  useEffect(() => {
     if (isEditMode && productToEdit) {
-      form.reset(productToEdit);
+      form.reset({
+        ...productToEdit,
+        price: Number(productToEdit.price) // Ensure price is a number for the form
+      });
     }
   }, [isEditMode, productToEdit, form]);
   const onSubmit = async (values: ProductFormValues) => {

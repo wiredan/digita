@@ -24,8 +24,8 @@ const navLinks = [
   { to: '/', label: 'Marketplace' },
   { to: '/education', label: 'Education Hub' }
 ];
-const currencies: Currency[] = ['USD', 'NGN', 'VND'];
-const languages: Language[] = ['English', 'Hausa', 'Yoruba', 'Igbo', 'Vietnamese'];
+const currencies: Currency[] = ['USD', 'NGN', 'VND', 'EUR', 'GBP', 'JPY'];
+const languages: Language[] = ['English', 'Hausa', 'Yoruba', 'Igbo', 'Vietnamese', 'Spanish', 'French', 'German', 'Chinese'];
 export function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);

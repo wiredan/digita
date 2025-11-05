@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useUserStore } from '@/stores/userStore';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -39,6 +39,14 @@ export function CheckoutPage() {
     resolver: zodResolver(paymentSchema),
     defaultValues: { cardNumber: "", expiry: "", cvc: "" },
   });
+  useEffect(() => {
+    if (user && user.kycStatus !== 'verified') {
+      toast.error("You must be KYC verified to checkout.", {
+        description: "Redirecting to your profile...",
+      });
+      setTimeout(() => navigate('/profile'), 2000);
+    }
+  }, [user, navigate]);
   if (!user) return <Navigate to="/auth" replace />;
   if (cart.length === 0 && step !== 'confirmation') return <Navigate to="/" replace />;
   const subtotal = cart.reduce((acc, p) => acc + p.price, 0);

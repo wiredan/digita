@@ -26,6 +26,12 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { toast } from 'sonner';
 import { Toaster } from '@/components/ui/sonner';
 import { useForm } from 'react-hook-form';
@@ -174,9 +180,22 @@ export function ProfilePage() {
                         <CardTitle>Your Product Listings</CardTitle>
                         <CardDescription>Manage the products you are selling on the marketplace.</CardDescription>
                       </div>
-                      <Button asChild>
-                        <Link to="/profile/listings/new"><PlusCircle className="mr-2 h-4 w-4" />Create New Listing</Link>
-                      </Button>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <span tabIndex={0}>
+                              <Button asChild disabled={user.kycStatus !== 'verified'}>
+                                <Link to="/profile/listings/new"><PlusCircle className="mr-2 h-4 w-4" />Create New Listing</Link>
+                              </Button>
+                            </span>
+                          </TooltipTrigger>
+                          {user.kycStatus !== 'verified' && (
+                            <TooltipContent>
+                              <p>KYC verification is required to list products.</p>
+                            </TooltipContent>
+                          )}
+                        </Tooltip>
+                      </TooltipProvider>
                     </CardHeader>
                     <CardContent>
                       <Table>

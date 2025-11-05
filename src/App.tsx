@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 import { RouterProvider } from 'react-router-dom';
-import { DANAIChat } from './components/DANAIChat';
 import { router } from './main';
 import { useAppStore } from './stores/appStore';
 export function App() {
@@ -13,7 +12,6 @@ export function App() {
   return (
     <>
       <RouterProvider router={router} />
-      <DANAIChat />
     </>
   );
 }

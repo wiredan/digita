@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -36,6 +35,18 @@ export function ProductDetailPage() {
     fetchProduct();
   }, [id]);
   const handleAddToCart = () => {
+    if (!user) {
+      toast.error('Please log in to add items to your cart.', {
+        action: { label: 'Log In', onClick: () => navigate('/auth') },
+      });
+      return;
+    }
+    if (user.kycStatus !== 'verified') {
+      toast.error('Please complete KYC verification to trade.', {
+        action: { label: 'Verify Now', onClick: () => navigate('/kyc') },
+      });
+      return;
+    }
     if (!product) return;
     addToCart(product);
     toast.success(`${product.name} added to cart!`);
