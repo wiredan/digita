@@ -10,16 +10,50 @@ import {
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { RouteErrorBoundary } from '@/components/RouteErrorBoundary';
 import '@/index.css'
-import { HomePage } from '@/pages/HomePage'
-
+import { HomePage } from '@/pages/HomePage';
+import { ProductDetailPage } from '@/pages/ProductDetailPage';
+import { AuthPage } from '@/pages/AuthPage';
+import { ProfilePage } from '@/pages/ProfilePage';
+import { KycPage } from '@/pages/KycPage';
+import { EducationHubPage } from '@/pages/EducationHubPage';
+import { AdminPage } from '@/pages/AdminPage';
 const router = createBrowserRouter([
   {
     path: "/",
     element: <HomePage />,
     errorElement: <RouteErrorBoundary />,
   },
+  {
+    path: "/product/:id",
+    element: <ProductDetailPage />,
+    errorElement: <RouteErrorBoundary />,
+  },
+  {
+    path: "/auth",
+    element: <AuthPage />,
+    errorElement: <RouteErrorBoundary />,
+  },
+  {
+    path: "/profile",
+    element: <ProfilePage />,
+    errorElement: <RouteErrorBoundary />,
+  },
+  {
+    path: "/kyc",
+    element: <KycPage />,
+    errorElement: <RouteErrorBoundary />,
+  },
+  {
+    path: "/education",
+    element: <EducationHubPage />,
+    errorElement: <RouteErrorBoundary />,
+  },
+  {
+    path: "/admin",
+    element: <AdminPage />,
+    errorElement: <RouteErrorBoundary />,
+  },
 ]);
-
 // Do not touch this code
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -28,4 +62,3 @@ createRoot(document.getElementById('root')!).render(
     </ErrorBoundary>
   </StrictMode>,
 )
-   
