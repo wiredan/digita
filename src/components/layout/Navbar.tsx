@@ -76,13 +76,13 @@ export function Navbar() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 items-center justify-between">
+        <div className="flex h-16 items-center">
           <Link to="/" className="flex items-center gap-2">
             <Leaf className="h-7 w-7 text-primary" />
             <span className="text-xl font-bold font-display text-primary">DAN</span>
           </Link>
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
+          <nav className="hidden md:flex items-center gap-6 text-sm font-medium ml-auto">
             {navLinks.map((link) => (
               <NavLink
                 key={link.to}
@@ -93,6 +93,7 @@ export function Navbar() {
                 {link.label}
               </NavLink>
             ))}
+            {/* Action Icons */}
             <div className="flex items-center gap-2">
               <ThemeToggle />
               <DropdownMenu>
