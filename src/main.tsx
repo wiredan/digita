@@ -18,6 +18,7 @@ import { KycPage } from '@/pages/KycPage';
 import { EducationHubPage } from '@/pages/EducationHubPage';
 import { AdminPage } from '@/pages/AdminPage';
 import { OrderTrackingPage } from '@/pages/OrderTrackingPage';
+import { EducationDetailPage } from '@/pages/EducationDetailPage';
 const router = createBrowserRouter([
   {
     path: "/",
@@ -52,6 +53,11 @@ const router = createBrowserRouter([
   {
     path: "/education",
     element: <EducationHubPage />,
+    errorElement: <RouteErrorBoundary />,
+  },
+  {
+    path: "/education/:articleId",
+    element: <EducationDetailPage />,
     errorElement: <RouteErrorBoundary />,
   },
   {

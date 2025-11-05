@@ -7,7 +7,8 @@ import { Separator } from '@/components/ui/separator';
 import { ArrowLeft, Package, Truck, CheckCircle, Home } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
-const orderStatuses = ['placed', 'shipped', 'delivered'] as const;
+import type { OrderStatus } from '@shared/types';
+const orderStatuses: OrderStatus[] = ['placed', 'shipped', 'delivered', 'cancelled', 'disputed'];
 export function OrderTrackingPage() {
   const { orderId } = useParams();
   const user = useUserStore((s) => s.user);
@@ -36,7 +37,8 @@ export function OrderTrackingPage() {
       </MainLayout>
     );
   }
-  const currentStatusIndex = orderStatuses.indexOf(order.status);
+  const progressStatuses = ['placed', 'shipped', 'delivered'] as const;
+  const currentStatusIndex = progressStatuses.indexOf(order.status as typeof progressStatuses[number]);
   const statusMap = [
     { name: 'Placed', icon: <Package className="h-6 w-6" />, date: order.date },
     { name: 'Shipped', icon: <Truck className="h-6 w-6" />, date: order.trackingNumber ? new Date(new Date(order.date).getTime() + 86400000).toISOString() : null },
@@ -62,7 +64,7 @@ export function OrderTrackingPage() {
             <CardContent>
               <div className="relative my-8">
                 <div className="absolute left-0 top-1/2 w-full h-0.5 bg-border -translate-y-1/2" />
-                <div className="absolute left-0 top-1/2 h-0.5 bg-primary -translate-y-1/2" style={{ width: `${(currentStatusIndex / (orderStatuses.length - 1)) * 100}%` }} />
+                <div className="absolute left-0 top-1/2 h-0.5 bg-primary -translate-y-1/2" style={{ width: `${(currentStatusIndex / (progressStatuses.length - 1)) * 100}%` }} />
                 <div className="relative flex justify-between">
                   {statusMap.map((status, index) => (
                     <div key={status.name} className="flex flex-col items-center text-center w-24">

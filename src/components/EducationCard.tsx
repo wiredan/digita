@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { Badge } from '@/components/ui/badge';
-import type { EducationContent } from '@shared/types';
+import type { EducationContent } from '@/lib/constants';
 interface EducationCardProps {
   article: EducationContent;
 }
