@@ -1,6 +1,6 @@
 import { MainLayout } from '@/components/layout/MainLayout';
 import { useUserStore } from '@/stores/userStore';
-import { Navigate } from 'react-router-dom';
+import { Navigate, Link } from 'react-router-dom';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -56,7 +56,9 @@ export function ProfilePage() {
                     </Badge>
                   </div>
                   {user.kycStatus !== 'verified' && (
-                    <Button className="mt-4 w-full">Complete Verification</Button>
+                    <Button className="mt-4 w-full" asChild>
+                      <Link to="/kyc">Complete Verification</Link>
+                    </Button>
                   )}
                 </CardContent>
               </Card>
