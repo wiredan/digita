@@ -19,7 +19,10 @@ import type { Product } from '@shared/types';
 const productSchema = z.object({
   name: z.string().min(3, { message: "Product name must be at least 3 characters." }),
   description: z.string().min(10, { message: "Description must be at least 10 characters." }),
-  price: z.coerce.number().positive({ message: "Price must be a positive number." }),
+  price: z.preprocess(
+    (val) => (val === "" ? undefined : Number(val)),
+    z.coerce.number({ invalid_type_error: "Price must be a number." }).positive({ message: "Price must be a positive number." })
+  ),
   category: z.string().min(1, { message: "Please select a category." }),
   imageUrl: z.string().url({ message: "Please enter a valid image URL." }),
 });
@@ -39,15 +42,11 @@ export function ProductEditPage() {
   const form = useForm<ProductFormValues>({
     resolver: zodResolver(productSchema),
     defaultValues: isEditMode && productToEdit ? {
-      name: productToEdit.name,
-      description: productToEdit.description,
-      price: productToEdit.price,
-      category: productToEdit.category,
-      imageUrl: productToEdit.imageUrl,
+      ...productToEdit,
     } : {
       name: "",
       description: "",
-      price: 0,
+      price: undefined,
       category: "",
       imageUrl: "",
     },
