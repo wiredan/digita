@@ -5,7 +5,6 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import {
   createBrowserRouter,
-  RouterProvider,
 } from "react-router-dom";
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { RouteErrorBoundary } from '@/components/RouteErrorBoundary';
@@ -21,7 +20,8 @@ import { OrderTrackingPage } from '@/pages/OrderTrackingPage';
 import { EducationDetailPage } from '@/pages/EducationDetailPage';
 import { ProductEditPage } from '@/pages/ProductEditPage';
 import { CheckoutPage } from '@/pages/CheckoutPage';
-const router = createBrowserRouter([
+import { App } from './App';
+export const router = createBrowserRouter([
   {
     path: "/",
     element: <HomePage />,
@@ -87,7 +87,7 @@ const router = createBrowserRouter([
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ErrorBoundary>
-      <RouterProvider router={router} />
+      <App />
     </ErrorBoundary>
   </StrictMode>,
 )

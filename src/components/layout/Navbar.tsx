@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, Leaf, User as UserIcon, LogOut, LayoutDashboard, ShoppingCart } from 'lucide-react';
+import { Menu, Leaf, User as UserIcon, LogOut, LayoutDashboard, ShoppingCart, Globe, DollarSign } from 'lucide-react';
 import { useUserStore } from '@/stores/userStore';
 import {
   DropdownMenu,
@@ -11,20 +11,30 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from '@/components/ui/badge';
 import { Cart } from '../Cart';
+import { useAppStore, Currency, Language } from '@/stores/appStore';
+import { ThemeToggle } from '../ThemeToggle';
 const navLinks = [
   { to: '/', label: 'Marketplace' },
   { to: '/education', label: 'Education Hub' },
 ];
+const currencies: Currency[] = ['USD', 'NGN', 'VND'];
+const languages: Language[] = ['English', 'Hausa', 'Yoruba', 'Igbo', 'Vietnamese'];
 export function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const user = useUserStore(s => s.user);
   const logout = useUserStore(s => s.logout);
   const cart = useUserStore(s => s.cart);
+  const currency = useAppStore(s => s.currency);
+  const setCurrency = useAppStore(s => s.setCurrency);
+  const language = useAppStore(s => s.language);
+  const setLanguage = useAppStore(s => s.setLanguage);
   const navigate = useNavigate();
   const handleLogout = () => {
     logout();
@@ -84,6 +94,30 @@ export function Navbar() {
             ))}
           </nav>
           <div className="hidden md:flex items-center gap-2">
+            <ThemeToggle className="h-9 w-9" />
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon"><DollarSign className="h-5 w-5" /></Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel>Currency</DropdownMenuLabel>
+                <DropdownMenuRadioGroup value={currency} onValueChange={(value) => setCurrency(value as Currency)}>
+                  {currencies.map(c => <DropdownMenuRadioItem key={c} value={c}>{c}</DropdownMenuRadioItem>)}
+                </DropdownMenuRadioGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon"><Globe className="h-5 w-5" /></Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel>Language</DropdownMenuLabel>
+                <DropdownMenuRadioGroup value={language} onValueChange={(value) => setLanguage(value as Language)}>
+                  {languages.map(l => <DropdownMenuRadioItem key={l} value={l}>{l}</DropdownMenuRadioItem>)}
+                </DropdownMenuRadioGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <Separator orientation="vertical" className="h-6" />
             <Button variant="ghost" size="icon" className="relative" onClick={() => setIsCartOpen(true)}>
               <ShoppingCart className="h-5 w-5" />
               {cart.length > 0 && (
