@@ -7,8 +7,14 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { CheckCircle, Clock, AlertCircle, Truck, Package } from 'lucide-react';
+import { CheckCircle, Clock, AlertCircle, Truck, Package, MoreHorizontal, PlusCircle } from 'lucide-react';
 import { format } from 'date-fns';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 const kycStatusMap = {
   verified: { text: 'Verified', variant: 'default', icon: <CheckCircle className="mr-2 h-4 w-4" /> },
   pending: { text: 'Pending', variant: 'secondary', icon: <Clock className="mr-2 h-4 w-4" /> },
@@ -25,6 +31,7 @@ const orderStatusMap = {
 export function ProfilePage() {
   const user = useUserStore(s => s.user);
   const orders = useUserStore(s => s.orders);
+  const products = useUserStore(s => s.products);
   const navigate = useNavigate();
   if (!user) {
     return <Navigate to="/auth" replace />;
@@ -66,8 +73,9 @@ export function ProfilePage() {
             </div>
             <div className="lg:col-span-2">
               <Tabs defaultValue="orders">
-                <TabsList className="grid w-full grid-cols-2">
+                <TabsList className="grid w-full grid-cols-3">
                   <TabsTrigger value="orders">Order History</TabsTrigger>
+                  <TabsTrigger value="listings">My Listings</TabsTrigger>
                   <TabsTrigger value="settings">Settings</TabsTrigger>
                 </TabsList>
                 <TabsContent value="orders">
@@ -100,6 +108,51 @@ export function ProfilePage() {
                                 </div>
                               </TableCell>
                               <TableCell className="text-right">${order.product.price.toFixed(2)}</TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+                <TabsContent value="listings">
+                  <Card>
+                    <CardHeader className="flex flex-row items-center justify-between">
+                      <div>
+                        <CardTitle>Your Product Listings</CardTitle>
+                        <CardDescription>Manage the products you are selling on the marketplace.</CardDescription>
+                      </div>
+                      <Button asChild>
+                        <Link to="/profile/listings/new"><PlusCircle className="mr-2 h-4 w-4" />Create New Listing</Link>
+                      </Button>
+                    </CardHeader>
+                    <CardContent>
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>Product</TableHead>
+                            <TableHead>Category</TableHead>
+                            <TableHead>Price</TableHead>
+                            <TableHead className="text-right">Actions</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {products.map(product => (
+                            <TableRow key={product.id}>
+                              <TableCell className="font-medium">{product.name}</TableCell>
+                              <TableCell>{product.category}</TableCell>
+                              <TableCell>${product.price.toFixed(2)}</TableCell>
+                              <TableCell className="text-right">
+                                <DropdownMenu>
+                                  <DropdownMenuTrigger asChild>
+                                    <Button variant="ghost" size="icon"><MoreHorizontal className="h-4 w-4" /></Button>
+                                  </DropdownMenuTrigger>
+                                  <DropdownMenuContent>
+                                    <DropdownMenuItem asChild><Link to={`/profile/listings/edit/${product.id}`}>Edit</Link></DropdownMenuItem>
+                                    <DropdownMenuItem className="text-destructive">Delete</DropdownMenuItem>
+                                  </DropdownMenuContent>
+                                </DropdownMenu>
+                              </TableCell>
                             </TableRow>
                           ))}
                         </TableBody>

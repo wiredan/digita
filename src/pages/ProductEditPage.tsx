@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { MainLayout } from '@/components/layout/MainLayout';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -12,76 +12,63 @@ import { useUserStore } from '@/stores/userStore';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Toaster } from '@/components/ui/sonner';
-import { ArrowLeft, Loader2 } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import type { Product } from '@shared/types';
 const productSchema = z.object({
   name: z.string().min(3, { message: "Product name must be at least 3 characters." }),
   description: z.string().min(10, { message: "Description must be at least 10 characters." }),
   price: z.coerce.number().positive({ message: "Price must be a positive number." }),
-  category: z.string().min(1, { message: "Please select a category." }),
+  category: z.string({ required_error: "Please select a category." }),
   imageUrl: z.string().url({ message: "Please enter a valid image URL." }),
 });
-type ProductFormValues = z.infer<typeof productSchema>;
-const categories = ["Grains & Cereals", "Fruits", "Vegetables", "Tubers", "Legumes", "Nuts & Seeds", "Herbs & Spices"];
+const categories = ["Fruits", "Vegetables", "Bakery", "Dairy & Eggs", "Pantry"];
 export function ProductEditPage() {
   const navigate = useNavigate();
   const { productId } = useParams();
   const isEditMode = Boolean(productId);
-  const [isLoading, setIsLoading] = useState(false);
   const user = useUserStore(s => s.user);
   const userProducts = useUserStore(s => s.products);
   const addProduct = useUserStore(s => s.addProduct);
   const updateProduct = useUserStore(s => s.updateProduct);
   const productToEdit = isEditMode ? userProducts.find(p => p.id === productId) : null;
-  const form = useForm<ProductFormValues>({
+  const form = useForm<z.infer<typeof productSchema>>({
     resolver: zodResolver(productSchema),
-    defaultValues: {
+    defaultValues: isEditMode && productToEdit ? {
+      name: productToEdit.name,
+      description: productToEdit.description,
+      price: productToEdit.price,
+      category: productToEdit.category,
+      imageUrl: productToEdit.imageUrl,
+    } : {
       name: "",
       description: "",
       price: 0,
-      category: "",
+      category: undefined,
       imageUrl: "",
     },
   });
-  useEffect(() => {
-    if (user && user.kycStatus !== 'verified') {
-      toast.error("You must be KYC verified to list products.", {
-        description: "Redirecting to your profile...",
-      });
-      setTimeout(() => navigate('/profile'), 2000);
-    }
-  }, [user, navigate]);
-  useEffect(() => {
-    if (isEditMode && productToEdit) {
-      form.reset({
-        ...productToEdit,
-        price: Number(productToEdit.price) // Ensure price is a number for the form
-      });
-    }
-  }, [isEditMode, productToEdit, form]);
-  const onSubmit = async (values: ProductFormValues) => {
+  const onSubmit = (values: z.infer<typeof productSchema>) => {
     if (!user) return;
-    setIsLoading(true);
-    try {
-      if (isEditMode && productToEdit) {
-        const updatedProduct: Product = {
-          ...productToEdit,
-          ...values,
-        };
-        await updateProduct(updatedProduct);
-        toast.success("Product updated successfully!");
-      } else {
-        await addProduct(values);
-        toast.success("Product created successfully!");
-      }
-      setTimeout(() => navigate('/profile'), 1500);
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "An unknown error occurred.");
-      setIsLoading(false);
+    if (isEditMode && productToEdit) {
+      const updatedProduct: Product = {
+        ...productToEdit,
+        ...values,
+      };
+      updateProduct(updatedProduct);
+      toast.success("Product updated successfully!");
+    } else {
+      const newProduct: Product = {
+        id: `prod_${Date.now()}`,
+        sellerName: user.name,
+        ...values,
+      };
+      addProduct(newProduct);
+      toast.success("Product created successfully!");
     }
+    setTimeout(() => navigate('/profile'), 1500);
   };
   return (
-    <>
+    <MainLayout>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="py-16 md:py-24">
           <div className="max-w-3xl mx-auto">
@@ -141,10 +128,7 @@ export function ProductEditPage() {
                         <FormMessage />
                       </FormItem>
                     )} />
-                    <Button type="submit" disabled={isLoading}>
-                      {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                      {isEditMode ? 'Save Changes' : 'Create Listing'}
-                    </Button>
+                    <Button type="submit">{isEditMode ? 'Save Changes' : 'Create Listing'}</Button>
                   </form>
                 </Form>
               </CardContent>
@@ -153,6 +137,6 @@ export function ProductEditPage() {
         </div>
       </div>
       <Toaster richColors />
-    </>
+    </MainLayout>
   );
 }

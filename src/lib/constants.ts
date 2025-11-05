@@ -108,6 +108,9 @@ export const MOCK_ORDERS: Order[] = [
     date: '2023-10-30T18:05:00.000Z',
   },
 ];
+export const MOCK_USER_PRODUCTS: Product[] = [
+  MOCK_PRODUCTS[1], MOCK_PRODUCTS[4], MOCK_PRODUCTS[6]
+].map(p => ({ ...p, sellerName: MOCK_USER_PROFILE.name }));
 export interface EducationContent {
   id: string;
   title: string;

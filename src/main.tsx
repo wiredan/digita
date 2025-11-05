@@ -19,6 +19,7 @@ import { EducationHubPage } from '@/pages/EducationHubPage';
 import { AdminPage } from '@/pages/AdminPage';
 import { OrderTrackingPage } from '@/pages/OrderTrackingPage';
 import { EducationDetailPage } from '@/pages/EducationDetailPage';
+import { ProductEditPage } from '@/pages/ProductEditPage';
 const router = createBrowserRouter([
   {
     path: "/",
@@ -38,6 +39,16 @@ const router = createBrowserRouter([
   {
     path: "/profile",
     element: <ProfilePage />,
+    errorElement: <RouteErrorBoundary />,
+  },
+  {
+    path: "/profile/listings/new",
+    element: <ProductEditPage />,
+    errorElement: <RouteErrorBoundary />,
+  },
+  {
+    path: "/profile/listings/edit/:productId",
+    element: <ProductEditPage />,
     errorElement: <RouteErrorBoundary />,
   },
   {
