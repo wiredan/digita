@@ -178,7 +178,7 @@ export function OrderTrackingPage() {
                     <div>
                       <p className="font-semibold">{user.name}</p>
                       <p className="text-sm text-muted-foreground">
-                        123 Agri Network St<br />
+                        123 Verdant Valley<br />
                         Farmville, AG 54321<br />
                         United States
                       </p>

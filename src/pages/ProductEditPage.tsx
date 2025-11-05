@@ -15,6 +15,7 @@ import { toast } from 'sonner';
 import { Toaster } from '@/components/ui/sonner';
 import { ArrowLeft, Loader2 } from 'lucide-react';
 import type { Product } from '@shared/types';
+
 const productSchema = z.object({
   name: z.string().min(3, { message: "Product name must be at least 3 characters." }),
   description: z.string().min(10, { message: "Description must be at least 10 characters." }),
@@ -22,6 +23,7 @@ const productSchema = z.object({
   category: z.string().min(1, { message: "Please select a category." }),
   imageUrl: z.string().url({ message: "Please enter a valid image URL." }),
 });
+
 type ProductFormValues = z.infer<typeof productSchema>;
 const categories = ["Fruits", "Vegetables", "Bakery", "Dairy & Eggs", "Pantry"];
 export function ProductEditPage() {
