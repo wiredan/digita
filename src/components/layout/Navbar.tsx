@@ -79,60 +79,62 @@ export function Navbar() {
             <Leaf className="h-7 w-7 text-primary" />
             <span className="text-xl font-bold font-display text-primary">DAN</span>
           </Link>
-          <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
-            {navLinks.map((link) =>
-            <NavLink
-              key={link.to}
-              to={link.to}
-              className={({ isActive }) =>
-              `${commonLinkClasses} ${isActive ? activeLinkClasses : 'text-muted-foreground'}`
-              }>
-                {link.label}
-              </NavLink>
-            )}
-          </nav>
-          <div className="hidden md:flex items-center gap-2">
-            <ThemeToggle className="h-9 w-9" />
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon"><DollarSign className="h-5 w-5" /></Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuLabel>Currency</DropdownMenuLabel>
-                <DropdownMenuRadioGroup value={currency} onValueChange={(value) => setCurrency(value as Currency)}>
-                  {currencies.map((c) => <DropdownMenuRadioItem key={c} value={c}>{c}</DropdownMenuRadioItem>)}
-                </DropdownMenuRadioGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon"><Globe className="h-5 w-5" /></Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuLabel>Language</DropdownMenuLabel>
-                <DropdownMenuRadioGroup value={language} onValueChange={(value) => setLanguage(value as Language)}>
-                  {languages.map((l) => <DropdownMenuRadioItem key={l} value={l}>{l}</DropdownMenuRadioItem>)}
-                </DropdownMenuRadioGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
-            <Separator orientation="vertical" className="h-6" />
-            <Button variant="ghost" size="icon" className="relative" onClick={() => setIsCartOpen(true)}>
-              <ShoppingCart className="h-5 w-5" />
-              {cart.length > 0 &&
-              <Badge className="absolute -top-2 -right-2 h-5 w-5 justify-center p-0">{cart.length}</Badge>
+          <div className="hidden md:flex items-center gap-6">
+            <nav className="flex items-center space-x-6 text-sm font-medium">
+              {navLinks.map((link) =>
+              <NavLink
+                key={link.to}
+                to={link.to}
+                className={({ isActive }) =>
+                `${commonLinkClasses} ${isActive ? activeLinkClasses : 'text-muted-foreground'}`
+                }>
+                  {link.label}
+                </NavLink>
+              )}
+            </nav>
+            <div className="flex items-center gap-2">
+              <ThemeToggle className="h-9 w-9" />
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon"><DollarSign className="h-5 w-5" /></Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuLabel>Currency</DropdownMenuLabel>
+                  <DropdownMenuRadioGroup value={currency} onValueChange={(value) => setCurrency(value as Currency)}>
+                    {currencies.map((c) => <DropdownMenuRadioItem key={c} value={c}>{c}</DropdownMenuRadioItem>)}
+                  </DropdownMenuRadioGroup>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon"><Globe className="h-5 w-5" /></Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuLabel>Language</DropdownMenuLabel>
+                  <DropdownMenuRadioGroup value={language} onValueChange={(value) => setLanguage(value as Language)}>
+                    {languages.map((l) => <DropdownMenuRadioItem key={l} value={l}>{l}</DropdownMenuRadioItem>)}
+                  </DropdownMenuRadioGroup>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              <Separator orientation="vertical" className="h-6" />
+              <Button variant="ghost" size="icon" className="relative" onClick={() => setIsCartOpen(true)}>
+                <ShoppingCart className="h-5 w-5" />
+                {cart.length > 0 &&
+                <Badge className="absolute -top-2 -right-2 h-5 w-5 justify-center p-0">{cart.length}</Badge>
+                }
+              </Button>
+              {user ?
+              <UserMenu /> :
+              <>
+                  <Button variant="ghost" asChild>
+                    <Link to="/auth">Log In</Link>
+                  </Button>
+                  <Button asChild>
+                    <Link to="/auth">Sign Up</Link>
+                  </Button>
+                </>
               }
-            </Button>
-            {user ?
-            <UserMenu /> :
-            <>
-                <Button variant="ghost" asChild>
-                  <Link to="/auth">Log In</Link>
-                </Button>
-                <Button asChild>
-                  <Link to="/auth">Sign Up</Link>
-                </Button>
-              </>
-            }
+            </div>
           </div>
           <div className="md:hidden">
             <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
