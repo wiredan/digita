@@ -26,7 +26,7 @@ export interface Product {
   description: string;
   price: number;
   imageUrl: string;
-  sellerName: string;
+  sellerName?: string;
   category: string;
 }
 export type KycStatus = 'not_started' | 'pending' | 'verified' | 'rejected';

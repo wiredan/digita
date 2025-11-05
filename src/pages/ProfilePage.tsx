@@ -15,6 +15,19 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { toast } from 'sonner';
+import { Toaster } from '@/components/ui/sonner';
 const kycStatusMap = {
   verified: { text: 'Verified', variant: 'default', icon: <CheckCircle className="mr-2 h-4 w-4" /> },
   pending: { text: 'Pending', variant: 'secondary', icon: <Clock className="mr-2 h-4 w-4" /> },
@@ -32,10 +45,19 @@ export function ProfilePage() {
   const user = useUserStore(s => s.user);
   const orders = useUserStore(s => s.orders);
   const products = useUserStore(s => s.products);
+  const deleteProduct = useUserStore(s => s.deleteProduct);
   const navigate = useNavigate();
   if (!user) {
     return <Navigate to="/auth" replace />;
   }
+  const handleDeleteProduct = async (productId: string) => {
+    try {
+      await deleteProduct(productId);
+      toast.success("Product deleted successfully.");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Failed to delete product.");
+    }
+  };
   const { text: kycText, variant: kycVariant, icon: kycIcon } = kycStatusMap[user.kycStatus];
   return (
     <MainLayout>
@@ -143,15 +165,31 @@ export function ProfilePage() {
                               <TableCell>{product.category}</TableCell>
                               <TableCell>${product.price.toFixed(2)}</TableCell>
                               <TableCell className="text-right">
-                                <DropdownMenu>
-                                  <DropdownMenuTrigger asChild>
-                                    <Button variant="ghost" size="icon"><MoreHorizontal className="h-4 w-4" /></Button>
-                                  </DropdownMenuTrigger>
-                                  <DropdownMenuContent>
-                                    <DropdownMenuItem asChild><Link to={`/profile/listings/edit/${product.id}`}>Edit</Link></DropdownMenuItem>
-                                    <DropdownMenuItem className="text-destructive">Delete</DropdownMenuItem>
-                                  </DropdownMenuContent>
-                                </DropdownMenu>
+                                <AlertDialog>
+                                  <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                      <Button variant="ghost" size="icon"><MoreHorizontal className="h-4 w-4" /></Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent>
+                                      <DropdownMenuItem asChild><Link to={`/profile/listings/edit/${product.id}`}>Edit</Link></DropdownMenuItem>
+                                      <AlertDialogTrigger asChild>
+                                        <DropdownMenuItem className="text-destructive" onSelect={(e) => e.preventDefault()}>Delete</DropdownMenuItem>
+                                      </AlertDialogTrigger>
+                                    </DropdownMenuContent>
+                                  </DropdownMenu>
+                                  <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                      <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                                      <AlertDialogDescription>
+                                        This action cannot be undone. This will permanently delete your product listing.
+                                      </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                      <AlertDialogAction onClick={() => handleDeleteProduct(product.id)}>Delete</AlertDialogAction>
+                                    </AlertDialogFooter>
+                                  </AlertDialogContent>
+                                </AlertDialog>
                               </TableCell>
                             </TableRow>
                           ))}
@@ -177,6 +215,7 @@ export function ProfilePage() {
           </div>
         </div>
       </div>
+      <Toaster richColors />
     </MainLayout>
   );
 }

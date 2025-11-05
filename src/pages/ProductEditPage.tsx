@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,7 +13,7 @@ import { useUserStore } from '@/stores/userStore';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Toaster } from '@/components/ui/sonner';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Loader2 } from 'lucide-react';
 import type { Product } from '@shared/types';
 const productSchema = z.object({
   name: z.string().min(3, { message: "Product name must be at least 3 characters." }),
@@ -27,6 +28,7 @@ export function ProductEditPage() {
   const navigate = useNavigate();
   const { productId } = useParams();
   const isEditMode = Boolean(productId);
+  const [isLoading, setIsLoading] = useState(false);
   const user = useUserStore(s => s.user);
   const userProducts = useUserStore(s => s.products);
   const addProduct = useUserStore(s => s.addProduct);
@@ -48,25 +50,26 @@ export function ProductEditPage() {
       imageUrl: "",
     },
   });
-  const onSubmit = (values: ProductFormData) => {
+  const onSubmit = async (values: ProductFormData) => {
     if (!user) return;
-    if (isEditMode && productToEdit) {
-      const updatedProduct: Product = {
-        ...productToEdit,
-        ...values,
-      };
-      updateProduct(updatedProduct);
-      toast.success("Product updated successfully!");
-    } else {
-      const newProduct: Product = {
-        id: `prod_${Date.now()}`,
-        sellerName: user.name,
-        ...values,
-      };
-      addProduct(newProduct);
-      toast.success("Product created successfully!");
+    setIsLoading(true);
+    try {
+      if (isEditMode && productToEdit) {
+        const updatedProduct: Product = {
+          ...productToEdit,
+          ...values,
+        };
+        await updateProduct(updatedProduct);
+        toast.success("Product updated successfully!");
+      } else {
+        await addProduct(values);
+        toast.success("Product created successfully!");
+      }
+      setTimeout(() => navigate('/profile'), 1500);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "An unknown error occurred.");
+      setIsLoading(false);
     }
-    setTimeout(() => navigate('/profile'), 1500);
   };
   return (
     <MainLayout>
@@ -129,7 +132,10 @@ export function ProductEditPage() {
                         <FormMessage />
                       </FormItem>
                     )} />
-                    <Button type="submit">{isEditMode ? 'Save Changes' : 'Create Listing'}</Button>
+                    <Button type="submit" disabled={isLoading}>
+                      {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                      {isEditMode ? 'Save Changes' : 'Create Listing'}
+                    </Button>
                   </form>
                 </Form>
               </CardContent>

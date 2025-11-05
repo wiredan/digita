@@ -11,8 +11,9 @@ interface UserState {
   logout: () => void;
   updateKycStatus: (status: KycStatus) => void;
   addOrder: (order: Order) => void;
-  addProduct: (product: Product) => void;
-  updateProduct: (product: Product) => void;
+  addProduct: (productData: Omit<Product, 'id' | 'sellerName'>) => Promise<void>;
+  updateProduct: (product: Product) => Promise<void>;
+  deleteProduct: (productId: string) => Promise<void>;
   addToCart: (product: Product) => void;
   removeFromCart: (productId: string) => void;
   clearCart: () => void;
@@ -40,14 +41,30 @@ export const useUserStore = create<UserState>()(
         set((state) => ({
           orders: [order, ...state.orders],
         })),
-      addProduct: (product) =>
+      addProduct: async (productData) => {
+        const newProduct = await api<Product>('/api/products', {
+          method: 'POST',
+          body: JSON.stringify(productData),
+        });
         set((state) => ({
-          products: [product, ...state.products],
-        })),
-      updateProduct: (product) =>
+          products: [newProduct, ...state.products],
+        }));
+      },
+      updateProduct: async (product) => {
+        const updatedProduct = await api<Product>(`/api/products/${product.id}`, {
+          method: 'PUT',
+          body: JSON.stringify(product),
+        });
         set((state) => ({
-          products: state.products.map((p) => (p.id === product.id ? product : p)),
-        })),
+          products: state.products.map((p) => (p.id === updatedProduct.id ? updatedProduct : p)),
+        }));
+      },
+      deleteProduct: async (productId: string) => {
+        await api(`/api/products/${productId}`, { method: 'DELETE' });
+        set((state) => ({
+          products: state.products.filter((p) => p.id !== productId),
+        }));
+      },
       addToCart: (product) =>
         set((state) => ({
           cart: [...state.cart, product],
