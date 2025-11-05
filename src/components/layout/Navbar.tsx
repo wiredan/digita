@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, Leaf, User as UserIcon, LogOut, LayoutDashboard, ShoppingCart, Globe, DollarSign } from 'lucide-react';
+import { Menu, Leaf, LogOut, LayoutDashboard, ShoppingCart, Globe, DollarSign } from 'lucide-react';
 import { useUserStore } from '@/stores/userStore';
 import {
   DropdownMenu,
@@ -79,20 +79,20 @@ export function Navbar() {
             <Leaf className="h-7 w-7 text-primary" />
             <span className="text-xl font-bold font-display text-primary">DAN</span>
           </Link>
-          <div className="hidden md:flex items-center gap-6">
-            <nav className="flex items-center space-x-6 text-sm font-medium">
-              {navLinks.map((link) =>
-              <NavLink
-                key={link.to}
-                to={link.to}
-                className={({ isActive }) =>
-                `${commonLinkClasses} ${isActive ? activeLinkClasses : 'text-muted-foreground'}`
-                }>
-                  {link.label}
-                </NavLink>
-              )}
-            </nav>
-            <div className="flex items-center gap-2">
+          {/* Desktop Navigation - REWRITTEN */}
+          <nav className="hidden md:flex items-center gap-4 text-sm font-medium">
+            {navLinks.map((link) =>
+            <NavLink
+              key={link.to}
+              to={link.to}
+              className={({ isActive }) =>
+              `${commonLinkClasses} ${isActive ? activeLinkClasses : 'text-muted-foreground'}`
+              }>
+                {link.label}
+              </NavLink>
+            )}
+            {/* Actions are now direct children of the nav */}
+            <div className="flex items-center gap-2 ml-4">
               <ThemeToggle className="h-9 w-9" />
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -135,7 +135,8 @@ export function Navbar() {
                 </>
               }
             </div>
-          </div>
+          </nav>
+          {/* Mobile Navigation - UNCHANGED */}
           <div className="md:hidden">
             <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
               <SheetTrigger asChild>
