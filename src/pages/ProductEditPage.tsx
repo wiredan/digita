@@ -18,7 +18,7 @@ const productSchema = z.object({
   name: z.string().min(3, { message: "Product name must be at least 3 characters." }),
   description: z.string().min(10, { message: "Description must be at least 10 characters." }),
   price: z.coerce.number().positive({ message: "Price must be a positive number." }),
-  category: z.string({ required_error: "Please select a category." }),
+  category: z.string().min(1, { message: "Please select a category." }),
   imageUrl: z.string().url({ message: "Please enter a valid image URL." }),
 });
 const categories = ["Fruits", "Vegetables", "Bakery", "Dairy & Eggs", "Pantry"];

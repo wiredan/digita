@@ -20,6 +20,7 @@ import { AdminPage } from '@/pages/AdminPage';
 import { OrderTrackingPage } from '@/pages/OrderTrackingPage';
 import { EducationDetailPage } from '@/pages/EducationDetailPage';
 import { ProductEditPage } from '@/pages/ProductEditPage';
+import { CheckoutPage } from '@/pages/CheckoutPage';
 const router = createBrowserRouter([
   {
     path: "/",
@@ -74,6 +75,11 @@ const router = createBrowserRouter([
   {
     path: "/admin",
     element: <AdminPage />,
+    errorElement: <RouteErrorBoundary />,
+  },
+  {
+    path: "/checkout",
+    element: <CheckoutPage />,
     errorElement: <RouteErrorBoundary />,
   },
 ]);

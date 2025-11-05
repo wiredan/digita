@@ -14,7 +14,13 @@ export function ProductDetailPage() {
   const navigate = useNavigate();
   const user = useUserStore((s) => s.user);
   const addOrder = useUserStore((s) => s.addOrder);
+  const addToCart = useUserStore((s) => s.addToCart);
   const product = MOCK_PRODUCTS.find((p) => p.id === id);
+  const handleAddToCart = () => {
+    if (!product) return;
+    addToCart(product);
+    toast.success(`${product.name} added to cart!`);
+  };
   const handleBuyNow = () => {
     if (!user) {
       toast.error('Please log in to make a purchase.', {
@@ -35,7 +41,6 @@ export function ProductDetailPage() {
       return;
     }
     if (!product) return;
-    // Create a new mock order
     const newOrder: Order = {
       id: `order_${Date.now()}`,
       orderNumber: `VD-${Math.floor(Math.random() * 900000) + 100000}`,
@@ -107,7 +112,7 @@ export function ProductDetailPage() {
                   <ShieldCheck className="mr-2 h-5 w-5" />
                   Buy Now
                 </Button>
-                <Button size="lg" variant="outline" className="w-full sm:w-auto">
+                <Button size="lg" variant="outline" className="w-full sm:w-auto" onClick={handleAddToCart}>
                   <ShoppingCart className="mr-2 h-5 w-5" />
                   Add to Cart
                 </Button>

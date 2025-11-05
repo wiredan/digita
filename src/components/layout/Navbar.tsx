@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, Leaf, User as UserIcon, LogOut, LayoutDashboard } from 'lucide-react';
+import { Menu, Leaf, User as UserIcon, LogOut, LayoutDashboard, ShoppingCart } from 'lucide-react';
 import { useUserStore } from '@/stores/userStore';
 import {
   DropdownMenu,
@@ -13,14 +13,18 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from '@/components/ui/badge';
+import { Cart } from '../Cart';
 const navLinks = [
   { to: '/', label: 'Marketplace' },
   { to: '/education', label: 'Education Hub' },
 ];
 export function Navbar() {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isCartOpen, setIsCartOpen] = useState(false);
   const user = useUserStore(s => s.user);
   const logout = useUserStore(s => s.logout);
+  const cart = useUserStore(s => s.cart);
   const navigate = useNavigate();
   const handleLogout = () => {
     logout();
@@ -80,6 +84,12 @@ export function Navbar() {
             ))}
           </nav>
           <div className="hidden md:flex items-center gap-2">
+            <Button variant="ghost" size="icon" className="relative" onClick={() => setIsCartOpen(true)}>
+              <ShoppingCart className="h-5 w-5" />
+              {cart.length > 0 && (
+                <Badge className="absolute -top-2 -right-2 h-5 w-5 justify-center p-0">{cart.length}</Badge>
+              )}
+            </Button>
             {user ? (
               <UserMenu />
             ) : (
@@ -94,7 +104,7 @@ export function Navbar() {
             )}
           </div>
           <div className="md:hidden">
-            <Sheet open={isOpen} onOpenChange={setIsOpen}>
+            <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon">
                   <Menu className="h-6 w-6" />
@@ -103,7 +113,7 @@ export function Navbar() {
               </SheetTrigger>
               <SheetContent side="right" className="w-[240px]">
                 <div className="flex flex-col p-4">
-                  <Link to="/" className="flex items-center gap-2 mb-8" onClick={() => setIsOpen(false)}>
+                  <Link to="/" className="flex items-center gap-2 mb-8" onClick={() => setIsMobileMenuOpen(false)}>
                     <Leaf className="h-7 w-7 text-primary" />
                     <span className="text-xl font-bold font-display text-primary">Verdant</span>
                   </Link>
@@ -112,7 +122,7 @@ export function Navbar() {
                       <NavLink
                         key={link.to}
                         to={link.to}
-                        onClick={() => setIsOpen(false)}
+                        onClick={() => setIsMobileMenuOpen(false)}
                         className={({ isActive }) =>
                           `text-lg ${commonLinkClasses} ${isActive ? activeLinkClasses : 'text-muted-foreground'}`
                         }
@@ -125,17 +135,17 @@ export function Navbar() {
                     {user ? (
                       <>
                         <Button variant="ghost" asChild>
-                          <Link to="/profile" onClick={() => setIsOpen(false)}>Profile</Link>
+                          <Link to="/profile" onClick={() => setIsMobileMenuOpen(false)}>Profile</Link>
                         </Button>
-                        <Button onClick={() => { handleLogout(); setIsOpen(false); }}>Log Out</Button>
+                        <Button onClick={() => { handleLogout(); setIsMobileMenuOpen(false); }}>Log Out</Button>
                       </>
                     ) : (
                       <>
                         <Button variant="ghost" asChild>
-                          <Link to="/auth" onClick={() => setIsOpen(false)}>Log In</Link>
+                          <Link to="/auth" onClick={() => setIsMobileMenuOpen(false)}>Log In</Link>
                         </Button>
                         <Button asChild>
-                          <Link to="/auth" onClick={() => setIsOpen(false)}>Sign Up</Link>
+                          <Link to="/auth" onClick={() => setIsMobileMenuOpen(false)}>Sign Up</Link>
                         </Button>
                       </>
                     )}
@@ -146,6 +156,7 @@ export function Navbar() {
           </div>
         </div>
       </div>
+      <Cart open={isCartOpen} onOpenChange={setIsCartOpen} />
     </header>
   );
 }
