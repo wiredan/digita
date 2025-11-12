@@ -1,6 +1,6 @@
 # DECENTRALIZED AGRIBUSINESS NETWORK (DAN)
 DECENTRALIZED AGRIBUSINESS NETWORK (DAN) is a comprehensive, full-stack agribusiness marketplace designed to connect farmers, buyers, and logistics providers in a secure and efficient ecosystem. The platform facilitates the buying and selling of crops and agricultural products, with all transactions gated by a mandatory KYC verification process. It features a robust order tracking system, integrated payment solutions supporting both traditional banking (via Paystack) and cryptocurrency (Sidrachain tokens), and an automated dispute resolution mechanism overseen by administrators. Additionally, DAN includes an Education Hub with regularly updated content, and an AI-powered assistant to guide users and provide market insights. The entire platform is built on a modern, scalable serverless architecture using Cloudflare Workers, ensuring high performance and reliability.
-[cloudflarebutton]
+[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/wiredan/digita)
 ## ✨ Key Features
 *   **Marketplace:** A comprehensive platform for buying and selling crops and farm products.
 *   **Secure Transactions:** All trading is restricted to KYC-verified users, ensuring a trusted environment.
@@ -64,4 +64,4 @@ This project is configured for seamless deployment to Cloudflare Pages.
 Alternatively, you can connect your GitHub repository to Cloudflare Pages for automated CI/CD deployments.
 ### Note on Configuration
 This project is pre-configured to deploy correctly on Cloudflare Pages. The necessary build commands and output directories are managed by the platform based on standard Vite project structures and the `wrangler.jsonc` file. You do not need a separate `.page.toml` file in the repository for a successful deployment.
-[cloudflarebutton]
+[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/wiredan/digita)
